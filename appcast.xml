@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>auto_updater_example</title>
+        <description>Most recent updates to auto_updater_example</description>
+        <language>en</language>
+        <item>
+            <title>Version 1.0.0</title>
+            <sparkle:releaseNotesLink>
+                https://your_domain/your_path/release_notes.html
+            </sparkle:releaseNotesLink>
+            <pubDate>Thu, 19 Oct 2023 14:30:00 +0200</pubDate>
+            <enclosure url="1.0.0+1/ip-tool-dev-1.0.0+1-macos.zip"
+                       sparkle:edSignature="pbdyPt92pnPkzLfQ7BhS9hbjcV9/ndkzSIlWjFQIUMcaCNbAFO2fzl0tISMNJApG2POTkZY0/kJQ2yZYOSVgAA=="
+                       sparkle:version="1.0.0"
+                       sparkle:os="macos"
+                       length="13400992"
+                       type="application/octet-stream" />
+        </item>
+    </channel>
+</rss>
