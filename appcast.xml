@@ -5,11 +5,12 @@
         <description>Most recent updates to auto_updater_example</description>
         <language>en</language>
         <item>
-            <title>Version 1.0.0</title>
+            <title>Version 1.0.1</title>
             </sparkle:releaseNotesLink>
-            <pubDate>Thu, 19 Oct 2023 14:30:00 +0200</pubDate>
-            <enclosure url="1.0.0+1/ip_tool_client-dev-1.0.0+1-macos.zip"
-            sparkle:edSignature="Hv/dRCwxzjS86qa29LF9rVL5SAb/dBZsw5bL656wCL1kvB4rGo0PMNlzToD5767piZ8bqqVa2XbkceZjsibMCQ==" length="24688533"
+            <pubDate>Thu, 19 Oct 2023 15:00:00 +0200</pubDate>
+            <enclosure url="1.0.1+2/ip_tool_client-dev-1.0.1+2-macos.zip"
+            sparkle:edSignature="aPuCC/F4JS5bdtHpU3eGKhs8n7xCgskHUAcUMPCJ8ggTE35RqvQAqA26qxMaiS7HX3xctYkiPV1Oz6f1bILvCw==" length="24688344"
+
 
                        sparkle:version="1.0.0"
                        sparkle:os="macos"
