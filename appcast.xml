@@ -6,15 +6,13 @@
         <language>en</language>
         <item>
             <title>Version 1.0.0</title>
-            <sparkle:releaseNotesLink>
-                https://your_domain/your_path/release_notes.html
             </sparkle:releaseNotesLink>
             <pubDate>Thu, 19 Oct 2023 14:30:00 +0200</pubDate>
-            <enclosure url="1.0.0+1/ip-tool-dev-1.0.0+1-macos.zip"
-                       sparkle:edSignature="pbdyPt92pnPkzLfQ7BhS9hbjcV9/ndkzSIlWjFQIUMcaCNbAFO2fzl0tISMNJApG2POTkZY0/kJQ2yZYOSVgAA=="
+            <enclosure url="1.0.0+1/ip_tool_client-dev-1.0.0+1-macos.zip"
+            sparkle:edSignature="Hv/dRCwxzjS86qa29LF9rVL5SAb/dBZsw5bL656wCL1kvB4rGo0PMNlzToD5767piZ8bqqVa2XbkceZjsibMCQ==" length="24688533"
+
                        sparkle:version="1.0.0"
                        sparkle:os="macos"
-                       length="13400992"
                        type="application/octet-stream" />
         </item>
     </channel>
