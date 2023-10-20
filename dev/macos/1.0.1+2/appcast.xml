@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Dev IP-Tool</title>
+        <item>
+            <title>1.0.1</title>
+            <pubDate>Thu, 19 Oct 2023 15:09:48 +0200</pubDate>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+            <enclosure url="ip_tool_client-dev-1.0.1+2-macos.zip" length="24688388" type="application/octet-stream" sparkle:edSignature="YVHw8In7iDk/OtcwmnzZYcleX6hmoJFrZgOB961CXQC582baBDPRPxEduhd9uFzBl2kh8SxYIpKDCgaVMJ5cAw=="/>
+        </item>
+    </channel>
+</rss>
