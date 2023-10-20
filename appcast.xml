@@ -11,7 +11,7 @@
             <sparkle:os>macos</sparkle:os>
             <enclosure
                 length="24688481"
-                type="application/octet-stream" url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/ip_tool_client-dev-1.0.1+2-macos.zip"
+                type="application/octet-stream" url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.0+1/ip_tool_client-dev-1.0.1+2-macos.zip"
                 sparkle:edSignature="auC7eBq0o6L9/Dvylcn2yfpuB/BM7vSMMAAUMD4Pgf8oON61dyYWLqVFB5K6JrOEzjSwat184WFu9sxm7zUHDw==" />
         </item>
     </channel>
