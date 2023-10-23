@@ -8,7 +8,7 @@
             <sparkle:version>2</sparkle:version>
             <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/ip_tool_client-dev-1.0.1+2-macos.dmg" length="25828499" type="application/octet-stream" sparkle:edSignature="Lcgn1CLUaAcnKP0I0hKExR9tJ06e38Xql2/SPuJf52C7qJBfwe9cSPqdvqlf23kk02IA+ejmXM9M4AwjhTizCQ=="/>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.1+2/ip_tool_client-dev-1.0.1+2-macos.dmg" length="25828499" type="application/octet-stream" sparkle:edSignature="Lcgn1CLUaAcnKP0I0hKExR9tJ06e38Xql2/SPuJf52C7qJBfwe9cSPqdvqlf23kk02IA+ejmXM9M4AwjhTizCQ=="/>
         </item>
     </channel>
 </rss>
