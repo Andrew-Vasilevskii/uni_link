@@ -4,21 +4,12 @@
         <title>Dev IP-Tool</title>
         <item>
             <title>1.0.1</title>
-            <pubDate>Tue, 24 Oct 2023 14:34:16 +0200</pubDate>
+            <pubDate>Tue, 24 Oct 2023 15:13:21 +0200</pubDate>
             <sparkle:criticalUpdate/>
             <sparkle:version>2</sparkle:version>
             <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.1+2/ip_tool_client-dev-1.0.1+2-macos.dmg" length="25249467" type="application/octet-stream" sparkle:edSignature="Q2c8UONDtHTxgWLyNRCSPFj/3jWiR5qSw6zBxHB8P1+rFaPoq/L5RXIsH6gXD4qRymB4stqQ8BdsY48VCVRUCg=="/>
-        </item>
-        <item>
-            <title>1.0.0</title>
-            <pubDate>Tue, 24 Oct 2023 14:13:58 +0200</pubDate>
-            <sparkle:criticalUpdate/>
-            <sparkle:version>1</sparkle:version>
-            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.0+1/ip_tool_client-dev-1.0.0+1-macos.dmg" length="25249491" type="application/octet-stream" sparkle:edSignature="0Fd7yoLK63XVJQshDlcB9IN0dL1TGu/e8TbF95iCgCo06r6Be9S+hm+nMMrSzpZ/3P4UX7MA0q/7X8X9RCIlDQ=="/>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.1+2/ip_tool_client-dev-1.0.1+2-macos.dmg" length="25249314" type="application/octet-stream" sparkle:edSignature="USsd22cPZOqQhZ6yjf2I/rl5Fc8lluYm6qj8jCJdMnZP+BiSGGWJdunVTqQNaFpNhMva6WqBdGtRsQvDccYiBg=="/>
         </item>
     </channel>
 </rss>
