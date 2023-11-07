@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+    <rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+        <channel>
+            <title>Dev IP-Tool</title>
+            <item>
+                <title>1.0.0</title>
+                <pubDate>Tue, 07 Nov 2023 10:38:20 +01:00</pubDate>
+                <sparkle:criticalUpdate/>
+                <sparkle:version>1</sparkle:version>
+                <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+                <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/windows/ip_tool_client-1.0.0+1-windows.exe" type="application/octet-stream" sparkle:dsaSignature="MDwCHD3vYf+aZF2ch+B9YgQpZe6wqFossiV2/S1cRccCHG/YwIvof79uXC3rw7fAqNLKEygz/zWB/JbCm20=" length="0"/>
+            </item>
+         </channel>
+     </rss>
