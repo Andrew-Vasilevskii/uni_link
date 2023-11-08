@@ -8,6 +8,7 @@
                 <sparkle:criticalUpdate/>
                 <sparkle:version>2</sparkle:version>
                 <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+                <sparkle:installerArguments>"/SILENT /SP-"</sparkle:installerArguments>
                 <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/windows/1.0.1+2/ip_tool_client-1.0.1+2-windows.zip" type="application/octet-stream" sparkle:dsaSignature="MDwCHD4fhsaEw9tI21VF83QA2AU4n3le3XE1qxbBNcICHF4IOyI7Z9JbYqF6eXSSUeg1L0DrIEpAHqM4aT8=" length="0"
                 />
             </item>
