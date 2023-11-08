@@ -8,7 +8,7 @@
                 <sparkle:criticalUpdate/>
                 <sparkle:version>2</sparkle:version>
                 <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-                <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/windows/1.0.1+2/ip_tool_client-1.0.1+2-windows.exe" sparkle:installerArguments="/SILENT /SP-" type="application/octet-stream" sparkle:dsaSignature="MD4CHQDIxYH+boME9h5KVHvlGQrSBw2as8MrqRLBNlPUAh0Ai2xnnJzmF0dKHIkAbd5vjjP94N+v7mXuieBHVg==" length="0"
+                <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/windows/1.0.1+2/ip_tool_client-1.0.1+2-windows.exe" sparkle:installerArguments="/VERYSILENT /SP-" type="application/octet-stream" sparkle:dsaSignature="MD4CHQDIxYH+boME9h5KVHvlGQrSBw2as8MrqRLBNlPUAh0Ai2xnnJzmF0dKHIkAbd5vjjP94N+v7mXuieBHVg==" length="0"
                 />
             </item>
          </channel>
