@@ -4,12 +4,21 @@
         <title>Dev IP-Tool</title>
         <item>
             <title>1.0.1</title>
-            <pubDate>Fri, 24 Nov 2023 11:38:57 +0100</pubDate>
+            <pubDate>Fri, 24 Nov 2023 13:03:13 +0100</pubDate>
             <sparkle:criticalUpdate/>
             <sparkle:version>2</sparkle:version>
             <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.1+2/ip_tool_client-1.0.1+2-macos.dmg" length="26477704" type="application/octet-stream" sparkle:edSignature="UO4CNqSd//pgCrggPxIve1ZGAQ0fwqcJ/oEA3WUzE501MOsGM95V+CLjhGVo6JxG2h1WB21rkOpfpoGqIoLwDw=="/>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.1+2/ip_tool_client-1.0.1+2-macos.dmg" length="26477414" type="application/octet-stream" sparkle:edSignature="Kl+8etuFGDx1ea/TXbdzdx+MkwPh+UnbitnanuAp/pAQvKn7TOfXUYl9B6oJBGlWVhbTggBlMzMujv/RceVjDA=="/>
+        </item>
+        <item>
+            <title>1.0.0</title>
+            <pubDate>Mon, 06 Nov 2023 21:34:17 +0100</pubDate>
+            <sparkle:criticalUpdate/>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/dev/macos/1.0.0+1/ip_tool_client-1.0.0+1-macos.dmg" length="25265445" type="application/octet-stream" sparkle:edSignature="lkjQWXAVG+KilpJVOmmvM0/7mf1EJ7ujzGb+zSU28YRFKXxcRLs/ci1LQE14/1gjO7aonqUBBg/v0CSmrc7/BA=="/>
         </item>
     </channel>
 </rss>
