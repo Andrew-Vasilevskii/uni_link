@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Dev IP-Tool</title>
+        <item>
+            <title>1.0.0</title>
+            <pubDate>Thu, 07 Dec 2023 15:18:47 +0100</pubDate>
+            <sparkle:criticalUpdate/>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/distribution/macos/1.0.0+1/ip_tool_client-1.0.0+1-macos.dmg" length="26494487" type="application/octet-stream" sparkle:edSignature="SsfAmvYVuw4kel3ryxHPHDTW2JWB0a92uLP5bx3OcLP0BqDRr2bSBREm90EOJZmx1Na1KnooYlQetxZe7RXCCw=="/>
+        </item>
+    </channel>
+</rss>
