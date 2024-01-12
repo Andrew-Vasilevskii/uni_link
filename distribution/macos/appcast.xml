@@ -4,12 +4,12 @@
         <title>Dev IP-Tool</title>
         <item>
             <title>1.0.1</title>
-            <pubDate>Thu, 11 Jan 2024 14:25:23 +0100</pubDate>
+            <pubDate>Fri, 12 Jan 2024 16:15:15 +0100</pubDate>
             <sparkle:criticalUpdate/>
             <sparkle:version>2</sparkle:version>
             <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/distribution/macos/1.0.1+2/ip_tool_client-1.0.1+2-macos.dmg" length="26635156" type="application/octet-stream" sparkle:edSignature="SEfXL8ier6hrJSfvG/vHuxCHG9dJzqvkJ/2OFtGpbgPu5iC2Dfy5rSZJfC0YFBi45aBvCyUuVtnYBBbBJq/UCA=="/>
+            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/distribution/macos/1.0.1+2/ip_tool_client-1.0.1+2-macos.dmg" length="26805363" type="application/octet-stream" sparkle:edSignature="UTgWFpzzj6P9kHNFZEp9nwsXgDA9RrB2xwvWZ6OtBlUP7SpOZXG9cLtJWUjyEWT7a6yK1p+G0UN50yTCbH3TCg=="/>
         </item>
     </channel>
 </rss>
