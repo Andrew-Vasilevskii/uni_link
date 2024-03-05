@@ -3,13 +3,22 @@
     <channel>
         <title>Dev IP-Tool</title>
         <item>
-            <title>1.0.1</title>
-            <pubDate>Fri, 12 Jan 2024 18:09:03 +0100</pubDate>
+            <title>1.1.0</title>
+            <pubDate>Tue, 05 Mar 2024 14:15:51 +0100</pubDate>
             <sparkle:criticalUpdate/>
-            <sparkle:version>2</sparkle:version>
-            <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+            <sparkle:version>3</sparkle:version>
+            <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
-            <enclosure url="https://andrew-vasilevskii.github.io/uni_link/distribution/macos/1.0.1+2/ip_tool_client-1.0.1+2-macos.dmg" length="26820425" type="application/octet-stream" sparkle:edSignature="iZwiH0HSXem9emzb0kvr01DIZdO+MTXtZ/7jnGUg64SkCJLrcq0s5TkTvcHq+X6UrmP/Z1drbeB2NNEQ8BXjCg=="/>
+            <enclosure url="https://app.dev.iptool.inno.ws/distribution/macos/builds/ip_tool_client-1.1.0+3-macos.dmg" length="27122120" type="application/octet-stream" sparkle:edSignature="GN+FfIOooBkPnCeSiEGoClbdRLm708IaiH/QSzUD+rojqHywXn+lxVOAAa5ipqy0ipeqT9NlO4FcKk91a+cXDA=="/>
+        </item>
+        <item>
+            <title>1.0.0</title>
+            <pubDate>Tue, 05 Mar 2024 14:12:36 +0100</pubDate>
+            <sparkle:criticalUpdate/>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>10.14</sparkle:minimumSystemVersion>
+            <enclosure url="https://app.dev.iptool.inno.ws/distribution/macos/builds/ip_tool_client-1.0.0+1-macos.dmg" length="27122028" type="application/octet-stream" sparkle:edSignature="DJoOjp+w5A4mLFkM4koviW7DBlJe+iDK8W8DzHYxofSlRXZ1QCDnb7p7RIyqooi4GUjKMawzYZIiSfznllxSCg=="/>
         </item>
     </channel>
 </rss>
