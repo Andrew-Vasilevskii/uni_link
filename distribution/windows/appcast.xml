@@ -3,12 +3,12 @@
         <channel>
             <title>Dev IP-Tool</title>
             <item>
-                <title>1.0.1</title>
-                <pubDate>Tue, 16 Jan 2024 00:18:09 +01:00</pubDate>
+                <title>1.1.0</title>
+                <pubDate>Tue, 05 Mar 2024 23:07:08 +01:00</pubDate>
                 <sparkle:criticalUpdate/>
-                <sparkle:version>2</sparkle:version>
-                <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
-                <enclosure url="https://andrew-vasilevskii.github.io/uni_link/distribution/windows/1.0.1+2/ip_tool_client-1.0.1+2-windows.exe" sparkle:version="1.0.1+2" sparkle:os="windows" sparkle:installerArguments="/SILENT /SP- /RESTARTAPPLICATIONS" type="application/octet-stream" sparkle:dsaSignature="" length="0"/>
+                <sparkle:version>3</sparkle:version>
+                <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+                <enclosure url="https://app.dev.iptool.inno.ws/distribution/windows/builds/ip_tool_client-1.1.0+3-windows.exe" sparkle:version="1.1.0+3" sparkle:os="windows" sparkle:installerArguments="/SILENT /SP- /RESTARTAPPLICATIONS" type="application/octet-stream" sparkle:dsaSignature="" length="0"/>
             </item>
          </channel>
      </rss>
