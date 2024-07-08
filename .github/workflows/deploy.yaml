@@ -1,0 +1,14 @@
+name: deploy prod
+
+on:
+  release:
+    types: [published]
+jobs:
+  android-prod:
+    name: android prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo
+      - run: bash ./deploy.sh
