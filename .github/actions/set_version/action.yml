@@ -1,0 +1,105 @@
+name: 'set version'
+inputs:
+  version:
+    type: string
+    required: true
+    default: "current"
+    description: "Version which should be used. If 'current' is used the version in pubspec.yaml will be used."
+  increase_build_number:
+    type: boolean
+    required: TRUE
+    description: "If true the buildnumber will be increased by one."
+  tag_prefix:
+    type: boolean
+    requried: true
+    description: "Prefix which should be used for the tag."
+
+env:
+  file: pubspec.yaml
+  current_value: "current"
+
+description: 'increases the buildnumber by one if increase_build_number and set the version in pubspec, pushes, and tag the changes'
+runs:
+  using: "composite"
+  steps:
+    - name: Extract version
+      id: extract-version
+      shell: bash
+      run: |        
+        VERSION_LINE=$(grep '^version:' ${{ env.file }})
+        VALUE=$(echo "$VERSION_LINE" | cut -d':' -f2 | tr -d ' ')
+        VERSION=$(echo "$VALUE" | cut -d'+' -f1)
+        BUILD_NUMBER=$(echo "$VALUE" | cut -d'+' -f2)
+        
+        echo "Extracted version: $VERSION"
+        echo "Extracted build: $BUILD_NUMBER"
+
+        echo "CURRENT_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
+        echo "CURRENT_BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+
+    - name: Update version and build number if needed
+      id: update
+      shell: bash
+      run: |        
+        INPUT_VERSION="${{ github.event.inputs.version }}"
+        INCREASE_BUILD="${{ github.event.inputs.increase_build_number }}"
+        CURRENT_VERSION="${{ steps.extract.outputs.CURRENT_VERSION }}"
+        CURRENT_BUILD="${{ steps.extract.outputs.CURRENT_BUILD }}"
+        
+        echo "INPUT_VERSION: $INPUT_VERSION"
+        echo "INCREASE_BUILD: $INCREASE_BUILD"
+        echo "CURRENT_VERSION: $CURRENT_VERSION"
+        echo "CURRENT_BUILD: $CURRENT_BUILD"
+        
+        # Decide new version
+        if [ "$INPUT_VERSION" = ${{ env.current }} ]; then
+          NEW_VERSION="$CURRENT_VERSION"
+        else
+          NEW_VERSION="$INPUT_VERSION"
+        fi
+        
+        # Decide new build
+        NEW_BUILD="$CURRENT_BUILD"
+        if $INCREASE_BUILD"; then
+          NEW_BUILD=$((CURRENT_BUILD + 1))
+        fi
+        
+        NEW_LINE="version: $NEW_VERSION+$NEW_BUILD"
+        
+        # Decide if anything changed
+        if [ "$NEW_VERSION" != "$CURRENT_VERSION" ] || [ "$NEW_BUILD" != "$CURRENT_BUILD" ]; then
+         SHOULD_CHANGE=true
+        else
+         SHOULD_CHANGE=false
+        fi
+                
+        echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+        echo "NEW_BUILD_NUMBER=$NEW_BUILD" >> "$GITHUB_OUTPUT"
+        echo "SHOULD_CHANGE=$SHOULD_CHANGE" >> "$GITHUB_OUTPUT"
+
+    - name: extract buildnumber
+      id: buildnumber
+      shell: bash
+      if: ${{ steps.update.outputs.SHOULD_CHANGE }}
+      run: |
+        echo "CHANGING"
+        echo "${{ steps.update.outputs.NEW_VERSION}}"
+        echo "${{ steps.update.outputs.NEW_BUILD_NUMBER}}"
+#        buildnumber=$(cat pubspec.yaml | grep 'version: [ 0-9\. ]*+[ 0-9 ]*' | cut -d "+" -f 2 | tr -d '[:cntrl:]')
+#        if [[ ${{ inputs.increase_build_number }} ]]; then
+#          ((buildnumber++))
+#        fi
+#        echo "buildnumber=$buildnumber" >> $GITHUB_OUTPUT
+#    - name: set version in pubspec and tag
+#      shell: bash
+#      run: |
+#        sed -i -E "s/version: .*$/version: ${{ inputs.version }}+${{ steps.buildnumber.outputs.buildnumber }}/" pubspec.yaml
+#        git config --global user.name 'github action'
+#        git config --global user.email 'developer@hansefit.de'
+#        git commit -am "${{ inputs.version }} ${{ steps.buildnumber.outputs.buildnumber }}" || true
+#        git tag "${{ inputs.tag_prefix }}-${{ inputs.version }}(${{ steps.buildnumber.outputs.buildnumber }})"
+#        git push || true
+        
+      
+
+
