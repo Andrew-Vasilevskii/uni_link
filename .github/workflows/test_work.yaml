@@ -16,8 +16,8 @@ jobs:
           SOME_KEY_TWO="SOME KEY 2@@@@"
           
           {
-            echo "some_key_one=SOME_KEY_ONE"
-            echo "some_key_two=SOME_KEY_TWO"
+            echo "some_key_one=$SOME_KEY_ONE"
+            echo "some_key_two=$SOME_KEY_TWO"
           } >> "$GITHUB_OUTPUT"
 
   echo_jon:
