@@ -21,8 +21,10 @@ runs:
     - name: Extract version
       id: extract-version
       shell: bash
+      env:
+        FILE: pubspec.yaml
       run: |        
-        VERSION_LINE=$(grep '^version:' ${{ env.file }})
+        VERSION_LINE=$(grep '^version:' $FILE)
         VALUE=$(echo "$VERSION_LINE" | cut -d':' -f2 | tr -d ' ')
         VERSION=$(echo "$VALUE" | cut -d'+' -f1)
         BUILD_NUMBER=$(echo "$VALUE" | cut -d'+' -f2)
@@ -37,8 +39,7 @@ runs:
       id: update
       shell: bash
       env:
-        file: pubspec.yaml
-        current_value: "current"
+        CURRENT_VALUE: "current"
       run: |        
         INPUT_VERSION="${{ github.event.inputs.version }}"
         INCREASE_BUILD="${{ github.event.inputs.increase_build_number }}"
@@ -51,7 +52,7 @@ runs:
         echo "CURRENT_BUILD: $CURRENT_BUILD"
         
         # Decide new version
-        if [ "$INPUT_VERSION" = ${{ env.current }} ]; then
+        if [ "$INPUT_VERSION" = $CURRENT_VALUE ]; then
           NEW_VERSION="$CURRENT_VERSION"
         else
           NEW_VERSION="$INPUT_VERSION"
