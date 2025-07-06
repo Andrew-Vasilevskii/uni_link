@@ -41,10 +41,10 @@ runs:
       env:
         CURRENT_VALUE: "current"
       run: |        
-        INPUT_VERSION="${{ github.event.inputs.version }}"
-        INCREASE_BUILD="${{ github.event.inputs.increase_build_number }}"
-        CURRENT_VERSION="${{ steps.extract.outputs.CURRENT_VERSION }}"
-        CURRENT_BUILD="${{ steps.extract.outputs.CURRENT_BUILD }}"
+        INPUT_VERSION="${{ inputs.version }}"
+        INCREASE_BUILD="${{ inputs.increase_build_number }}"
+        CURRENT_VERSION="${{ steps.extract-version.outputs.CURRENT_VERSION }}"
+        CURRENT_BUILD="${{ steps.extract-version.outputs.CURRENT_BUILD }}"
         
         echo "INPUT_VERSION: $INPUT_VERSION"
         echo "INCREASE_BUILD: $INCREASE_BUILD"
