@@ -1,0 +1,6 @@
+name: TheApp
+description: Description
+
+publish_to: "none"
+
+version: 2.0.0+12
