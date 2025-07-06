@@ -2,19 +2,30 @@ name: Test workflow
 
 on:
   workflow_dispatch:
-    inputs:
-      env:
-        description: ''
-        type: choice
-        required: true
-        options:
-          - DEV
-          - STAGE
-          - PROD
-          - other
 
 jobs:
-  test:
-    uses: ./.github/workflows/test_work_call.yaml
-    with:
-      flavor: ${{ inputs.env }}
+  define_arguments:
+    needs: validate-inputs
+    id: define_arguments
+    runs-on: ubuntu-latest
+    outputs:
+      some_key_one: ${{ steps.set.outputs.some_key_one }}
+      some_key_two: ${{ steps.set.outputs.some_key_two }}
+    steps:
+      - id: set
+        run: |
+          SOME_KEY_ONE="SOME KEY 1!!!!"
+          SOME_KEY_TWO="SOME KEY 2@@@@"
+          
+          {
+            echo "some_key_one=SOME_KEY_ONE"
+            echo "some_key_two=SOME_KEY_TWO"
+          } >> "$GITHUB_OUTPUT"
+
+  echo_jon:
+    needs: define_arguments
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "ONE: ${ steps.define_arguments.outputs.some_key_one }"
+          echo "TWO: ${ steps.define_arguments.outputs.some_key_two }"
