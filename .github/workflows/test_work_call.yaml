@@ -16,11 +16,10 @@ jobs:
     steps:
       - name: Validate Flavor input
         env:
-          SUPPORTED_FLAVORS: DEV|TEST|PROD
           INPUT_FLAVOR: ${{ inputs.flavor }}
         run: |
           case "$INPUT_FLAVOR" in 
-            $SUPPORTED_FLAVORS) ;;
-            *) echo "❌ Invalid flavor: $INPUT_FLAVOR" exit 1 ;;
+            DEV|TEST|PROD) ;;
+            *) echo "❌ Invalid flavor: $INPUT_FLAVOR"; exit 1 ;;
           esac
 
