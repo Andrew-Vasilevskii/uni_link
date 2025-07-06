@@ -7,7 +7,7 @@ inputs:
     description: "Version which should be used. If 'current' is used the version in pubspec.yaml will be used."
   increase_build_number:
     type: boolean
-    required: TRUE
+    required: true
     description: "If true the buildnumber will be increased by one."
   tag_prefix:
     type: boolean
@@ -29,9 +29,6 @@ runs:
         VERSION=$(echo "$VALUE" | cut -d'+' -f1)
         BUILD_NUMBER=$(echo "$VALUE" | cut -d'+' -f2)
         
-        echo "Extracted version: $VERSION"
-        echo "Extracted build: $BUILD_NUMBER"
-
         echo "CURRENT_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
         echo "CURRENT_BUILD=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
@@ -45,11 +42,6 @@ runs:
         INCREASE_BUILD="${{ inputs.increase_build_number }}"
         CURRENT_VERSION="${{ steps.extract-version.outputs.CURRENT_VERSION }}"
         CURRENT_BUILD="${{ steps.extract-version.outputs.CURRENT_BUILD }}"
-        
-        echo "INPUT_VERSION: $INPUT_VERSION"
-        echo "INCREASE_BUILD: $INCREASE_BUILD"
-        echo "CURRENT_VERSION: $CURRENT_VERSION"
-        echo "CURRENT_BUILD: $CURRENT_BUILD"
         
         # Decide new version
         if [ "$INPUT_VERSION" = $CURRENT_VALUE ]; then
@@ -78,7 +70,7 @@ runs:
     - name: extract buildnumber
       id: buildnumber
       shell: bash
-      if: ${{ steps.update.outputs.SHOULD_CHANGE }}
+      if: ${{ steps.update.outputs.SHOULD_CHANGE == 'true' }}
       run: |
         echo "CHANGING"
         echo "${{ steps.update.outputs.NEW_VERSION}}"
