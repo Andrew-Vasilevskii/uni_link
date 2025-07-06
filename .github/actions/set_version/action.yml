@@ -14,10 +14,6 @@ inputs:
     requried: true
     description: "Prefix which should be used for the tag."
 
-env:
-  file: pubspec.yaml
-  current_value: "current"
-
 description: 'increases the buildnumber by one if increase_build_number and set the version in pubspec, pushes, and tag the changes'
 runs:
   using: "composite"
@@ -40,6 +36,9 @@ runs:
     - name: Update version and build number if needed
       id: update
       shell: bash
+      env:
+        file: pubspec.yaml
+        current_value: "current"
       run: |        
         INPUT_VERSION="${{ github.event.inputs.version }}"
         INCREASE_BUILD="${{ github.event.inputs.increase_build_number }}"
@@ -63,8 +62,6 @@ runs:
         if $INCREASE_BUILD"; then
           NEW_BUILD=$((CURRENT_BUILD + 1))
         fi
-        
-        NEW_LINE="version: $NEW_VERSION+$NEW_BUILD"
         
         # Decide if anything changed
         if [ "$NEW_VERSION" != "$CURRENT_VERSION" ] || [ "$NEW_BUILD" != "$CURRENT_BUILD" ]; then
