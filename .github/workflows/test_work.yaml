@@ -15,6 +15,6 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/workflow_call/test_work_call.yaml
+    uses: ./.github/workflows/test_work_call.yaml
     with:
       flavor: ${{ inputs.env }}
