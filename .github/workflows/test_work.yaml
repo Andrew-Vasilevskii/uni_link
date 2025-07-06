@@ -5,8 +5,6 @@ on:
 
 jobs:
   define_arguments:
-    needs: validate-inputs
-    id: define_arguments
     runs-on: ubuntu-latest
     outputs:
       some_key_one: ${{ steps.set.outputs.some_key_one }}
