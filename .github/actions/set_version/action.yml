@@ -24,9 +24,9 @@ runs:
       env:
         FILE: "pubspec.yaml"
       run: |
-        VALUE=$(grep '^version:' "$FILE" | cut -d':' -f2 | tr -d ' ')
-        VERSION="${VALUE%%+*}"
-        BUILD_NUMBER="${VALUE##*+}"
+        VERSION_VALUE=$(grep '^version:' "$FILE" | cut -d':' -f2 | tr -d ' ')
+        VERSION="${VERSION_VALUE%%+*}"
+        BUILD_NUMBER="${VERSION_VALUE##*+}"
         
         echo "CURRENT_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
         echo "CURRENT_BUILD=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
@@ -53,7 +53,6 @@ runs:
           NEW_BUILD=$((CURRENT_BUILD + 1))
         fi
         
-        echo "NEW BUILD $NEW_BUILD"
         # Decide if anything changed
         if [ "$NEW_VERSION" != "$CURRENT_VERSION" ] || [ "$NEW_BUILD" != "$CURRENT_BUILD" ]; then
          SHOULD_CHANGE=true
@@ -61,34 +60,25 @@ runs:
          SHOULD_CHANGE=false
         fi
                 
-        echo "SHOULD_CHANGE $SHOULD_CHANGE"
         echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
         echo "NEW_BUILD_NUMBER=$NEW_BUILD" >> "$GITHUB_OUTPUT"
         echo "SHOULD_CHANGE=$SHOULD_CHANGE" >> "$GITHUB_OUTPUT"
 
-    - name: extract buildnumber
-      id: buildnumber
+    - name: set version in pubspec and tag
       shell: bash
       if: ${{ steps.bump.outputs.SHOULD_CHANGE == 'true' }}
+      env:
+        FILE: "pubspec.yaml"
+        VERSION: ${{ steps.bump.outputs.NEW_VERSION }}
+        BUILD_NUMBER: ${{ steps.bump.outputs.NEW_BUILD }}
+        TAG_PREFIX: ${{ inputs.tag_prefix }}
       run: |
-        echo "CHANGING"
-        echo "${{ steps.update.outputs.NEW_VERSION}}"
-        echo "${{ steps.update.outputs.NEW_BUILD_NUMBER}}"
-#        buildnumber=$(cat pubspec.yaml | grep 'version: [ 0-9\. ]*+[ 0-9 ]*' | cut -d "+" -f 2 | tr -d '[:cntrl:]')
-#        if [[ ${{ inputs.increase_build_number }} ]]; then
-#          ((buildnumber++))
-#        fi
-#        echo "buildnumber=$buildnumber" >> $GITHUB_OUTPUT
-#    - name: set version in pubspec and tag
-#      shell: bash
-#      run: |
-#        sed -i -E "s/version: .*$/version: ${{ inputs.version }}+${{ steps.buildnumber.outputs.buildnumber }}/" pubspec.yaml
-#        git config --global user.name 'github action'
-#        git config --global user.email 'developer@hansefit.de'
-#        git commit -am "${{ inputs.version }} ${{ steps.buildnumber.outputs.buildnumber }}" || true
-#        git tag "${{ inputs.tag_prefix }}-${{ inputs.version }}(${{ steps.buildnumber.outputs.buildnumber }})"
-#        git push || true
+        # Set new version in file
+        sed -i -E "s/version: .*$/version: $VERSION+$BUILD_NUMBER/" $FILE
         
-      
-
-
+        git config --global user.name 'github action'
+        git config --global user.email 'developer@hansefit.de'
+        
+        git commit -am "$VERSION $BUILD_NUMBER" || true
+        git tag "$TAG_PREFIX-$VERSION($BUILD_NUMBER)"
+        git push || true

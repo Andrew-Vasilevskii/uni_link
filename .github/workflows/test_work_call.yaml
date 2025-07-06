@@ -1,0 +1,26 @@
+name: Test workflow on call
+
+on:
+  workflow_call:
+    inputs:
+      flavor:
+        description: "Environment. Must be: DEV, TEST, PROD"
+        required: true
+        type: string
+
+jobs:
+  validate-inputs:
+    runs-on: ubuntu-latest
+    outputs:
+      flavor: ${{ inputs.flavor }}
+    steps:
+      - name: Validate Flavor input
+        env:
+          SUPPORTED_FLAVORS: DEV|TEST|PROD
+          INPUT_FLAVOR: ${{ inputs.flavor }}
+        run: |
+          case "$INPUT_FLAVOR" in 
+            $SUPPORTED_FLAVORS) ;;
+            *) echo "❌ Invalid flavor: $INPUT_FLAVOR" exit 1 ;;
+          esac
+

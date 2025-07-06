@@ -1,0 +1,22 @@
+name: Test workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: ''
+        type: choice
+        required: true
+        options:
+          - DEV
+          - STAGE
+          - PROD
+          - other
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/test_work_call.yaml
+        with:
+          flavor: ${{ inputs.env }}
