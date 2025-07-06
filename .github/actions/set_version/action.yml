@@ -36,11 +36,11 @@ runs:
       shell: bash
       env:
         CURRENT_VALUE: "current"
-      run: |        
-        INPUT_VERSION="${{ inputs.version }}"
-        CURRENT_VERSION="${{ steps.extract-version.outputs.CURRENT_VERSION }}"
-        CURRENT_BUILD="${{ steps.extract-version.outputs.CURRENT_BUILD }}"
-        
+        INPUT_VERSION: ${{ inputs.version }}
+        CURRENT_VERSION: ${{ steps.extract-version.outputs.CURRENT_VERSION }}
+        CURRENT_BUILD: ${{ steps.extract-version.outputs.CURRENT_BUILD }}
+        INCREASE_BUILD_NUMBER: ${{ inputs.increase_build_number }}
+      run: |                
         # Decide new version
         NEW_VERSION="$INPUT_VERSION"
         if [ "$INPUT_VERSION" = $CURRENT_VALUE ]; then
@@ -49,7 +49,7 @@ runs:
         
         # Decide new build
         NEW_BUILD="$CURRENT_BUILD"
-        if ${{ inputs.increase_build_number }}; then
+        if $INCREASE_BUILD_NUMBER; then
           NEW_BUILD=$((CURRENT_BUILD + 1))
         fi
         
