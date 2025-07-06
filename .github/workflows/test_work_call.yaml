@@ -1,5 +1,3 @@
-name: Test workflow on call
-
 on:
   workflow_call:
     inputs:
