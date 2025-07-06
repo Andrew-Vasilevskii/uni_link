@@ -24,6 +24,17 @@ jobs:
           increase_build_number: true
           tag_prefix: dev
 
+  version_same_custom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/set_version/
+        with:
+          version: "2.0.0"
+          increase_build_number: false
+          tag_prefix: dev
+
   version_not_same:
     runs-on: ubuntu-latest
     timeout-minutes: 20
