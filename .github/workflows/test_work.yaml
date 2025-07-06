@@ -18,11 +18,11 @@ jobs:
         run: |
           SOME_KEY_ONE="SOME KEY 1!!!!"
           SOME_KEY_TWO="SOME KEY 2@@@@"
-          
+          ENV=${{ inputs.env }}
           {
             echo "some_key_one=$SOME_KEY_ONE"
             echo "some_key_two=$SOME_KEY_TWO"
-            echo "lower_version=${{ inputs.env,, }}"
+            echo "lower_version=${ENV,,}"
           } >> "$GITHUB_OUTPUT"
 
   echo_jon:
