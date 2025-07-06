@@ -33,7 +33,7 @@ runs:
         echo "Extracted build: $BUILD_NUMBER"
 
         echo "CURRENT_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-        echo "CURRENT_BUILD_NUMBER=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "CURRENT_BUILD=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
 
     - name: Update version and build number if needed
       id: update
