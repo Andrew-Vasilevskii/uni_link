@@ -2,6 +2,9 @@ name: Test workflow
 
 on:
   workflow_dispatch:
+    inputs:
+      evn:
+        type: string
 
 jobs:
   define_arguments:
@@ -9,6 +12,7 @@ jobs:
     outputs:
       some_key_one: ${{ steps.set.outputs.some_key_one }}
       some_key_two: ${{ steps.set.outputs.some_key_two }}
+      lower_version: ${{ steps.set.outputs.lower_version }}
     steps:
       - id: set
         run: |
@@ -18,18 +22,14 @@ jobs:
           {
             echo "some_key_one=$SOME_KEY_ONE"
             echo "some_key_two=$SOME_KEY_TWO"
+            echo "lower_version=${{ inputs.env,, }}"
           } >> "$GITHUB_OUTPUT"
 
   echo_jon:
     needs: define_arguments
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          SOME_VALUE="SOMe vaLuE"
-          
-          echo $SOME_VALUE
-          echo ${SOME_VALUE^^}
-          echo ${SOME_VALUE,,}
-          
+      - run: |        
           echo "ONE: ${{ needs.define_arguments.outputs.some_key_one }}"
           echo "TWO: ${{ needs.define_arguments.outputs.some_key_two }}"
+          echo "ENV: ${{ needs.define_arguments.outputs.lower_version }}"
