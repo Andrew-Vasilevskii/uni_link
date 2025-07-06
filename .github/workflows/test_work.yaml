@@ -25,5 +25,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo "ONE: ${ steps.define_arguments.outputs.some_key_one }"
-          echo "TWO: ${ steps.define_arguments.outputs.some_key_two }"
+          echo "ONE: ${{ steps.define_arguments.outputs.some_key_one }}"
+          echo "TWO: ${{ steps.define_arguments.outputs.some_key_two }}"
