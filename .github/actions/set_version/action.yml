@@ -60,7 +60,7 @@ runs:
         
         # Decide new build
         NEW_BUILD="$CURRENT_BUILD"
-        if $INCREASE_BUILD"; then
+        if $INCREASE_BUILD; then
           NEW_BUILD=$((CURRENT_BUILD + 1))
         fi
         
