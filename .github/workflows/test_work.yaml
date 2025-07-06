@@ -3,7 +3,7 @@ name: Test workflow
 on:
   workflow_dispatch:
     inputs:
-      evn:
+      env:
         type: string
 
 jobs:
