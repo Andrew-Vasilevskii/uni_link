@@ -15,9 +15,6 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/workflows/test_work_call.yaml
-        with:
-          flavor: ${{ inputs.env }}
+    uses: ./.github/workflows/test_work_call.yaml
+    with:
+      flavor: ${{ inputs.env }}
