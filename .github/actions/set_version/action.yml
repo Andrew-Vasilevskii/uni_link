@@ -69,7 +69,7 @@ runs:
     - name: extract buildnumber
       id: buildnumber
       shell: bash
-      if: ${{ steps.bump.outputs.SHOULD_CHANGE }}
+      if: ${{ steps.bump.outputs.SHOULD_CHANGE == 'true' }}
       run: |
         echo "CHANGING"
         echo "${{ steps.update.outputs.NEW_VERSION}}"
