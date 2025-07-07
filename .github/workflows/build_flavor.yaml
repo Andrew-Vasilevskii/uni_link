@@ -71,7 +71,9 @@ jobs:
       normalized_flavor: ${{ steps.set.outputs.normalized_flavor }}
       dev_override_flavor: ${{ steps.set.outputs.dev_override_flavor }}
       some_secret: ${{ steps.set.outputs.some_secret }}
-
+    env:
+      SECRET1: ${{ secrets.SECRET1 }}
+      SECRET2: ${{ secrets.SECRET2 }}
     steps:
       - name: Set values
         id: set
@@ -90,10 +92,10 @@ jobs:
           # --- 2️⃣Set API keys based on API_KEY_FLAVOR ---
           case "$API_FLAVOR" in
             DEV)
-              SOME_SECRET=${{ secrets.SECRET1 }}
+              SOME_SECRET=$SECRET1
               ;;
             TEST)
-              SOME_SECRET=${{ secrets.SECRET2 }}
+              SOME_SECRET=$secrets.SECRET2
               ;;
             PROD)
               SOME_SECRET="TESTING"
