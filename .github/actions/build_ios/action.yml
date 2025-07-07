@@ -11,6 +11,8 @@ inputs:
     default: "DEV"
   SOME_SECRET:
     required: true
+  SOME_SECRET2:
+    required: true
 
 description: 'deploys the app to the appstore'
 runs:
@@ -24,4 +26,10 @@ runs:
         else 
           echo "SOME_SECRET is not empty"
         fi
+        
+        if [[ -z "$SOME_SECRET2" ]]; then
+                  echo "SOME_SECRET2 is empty"
+                else 
+                  echo "SOME_SECRET2 is not empty"
+                fi
       shell: bash

@@ -74,7 +74,7 @@ jobs:
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
           
           if [[ "${{ inputs.env }}" == "DEV" ]]; then
-            SOME_SECRET=${{ secrets.SECRET1 }}
+            echo "some_secret=${{ secrets.SECRET1 }}" >> $GITHUB_OUTPUT
           elif [[ "${{ inputs.env }}" == "BETA" ]]; then
             SOME_SECRET=${{ secrets.SECRET2 }}
           elif [[ "${{ inputs.env }}" == "PROD" ]]; then
@@ -106,3 +106,4 @@ jobs:
           ENV: ${{ needs.define_flavor_arguments.outputs.normalized_flavor }}
           DEV_ENV: ${{ needs.define_flavor_arguments.outputs.dev_override_flavor }}
           SOME_SECRET: ${{ needs.define_flavor_arguments.outputs.some_secret }}
+          SOME_SECRET2: ${{ secrets.SECRET2 }}
