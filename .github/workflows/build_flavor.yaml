@@ -95,7 +95,7 @@ jobs:
               SOME_SECRET=$SECRET1
               ;;
             TEST)
-              SOME_SECRET=$secrets.SECRET2
+              SOME_SECRET=$SECRET2
               ;;
             PROD)
               SOME_SECRET="TESTING"
