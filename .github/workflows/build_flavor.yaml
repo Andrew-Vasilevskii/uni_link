@@ -90,7 +90,6 @@ jobs:
           {
             echo "normalized_flavor=$NORMALIZED_FLAVOR"
             echo "dev_override_flavor=$API_FLAVOR"
-            echo "some_secret=$SOME_SECRET"
           } >> "$GITHUB_OUTPUT"
 
   build_ios:
