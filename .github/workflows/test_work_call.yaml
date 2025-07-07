@@ -14,12 +14,16 @@ jobs:
     outputs:
       flavor: ${{ inputs.flavor }}
     steps:
-      - name: Validate Flavor input
+      - id: validate
+        shell: bash
         env:
           INPUT_FLAVOR: ${{ inputs.flavor }}
+          ALLOWED_FLAVORS: "DEV, TEST, PROD"
         run: |
-          case "$INPUT_FLAVOR" in 
-            DEV|TEST|PROD) ;;
-            *) echo "❌ Invalid flavor: $INPUT_FLAVOR"; exit 1 ;;
-          esac
+          IFS=' ' read -r -a allowed_array <<< "$ALLOWED_FLAVORS"
+          for f in "${allowed_array[@]}"; do [ "$INPUT_FLAVOR" == "$f" ] && exit 0; done
+          
+          echo "❌ Invalid flavor: $INPUT_FLAVOR. Supported: $ALLOWED_FLAVORS"
+          exit 1
+
 

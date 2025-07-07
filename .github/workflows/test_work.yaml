@@ -7,29 +7,7 @@ on:
         type: string
 
 jobs:
-  define_arguments:
-    runs-on: ubuntu-latest
-    outputs:
-      some_key_one: ${{ steps.set.outputs.some_key_one }}
-      some_key_two: ${{ steps.set.outputs.some_key_two }}
-      lower_version: ${{ steps.set.outputs.lower_version }}
-    steps:
-      - id: set
-        run: |
-          SOME_KEY_ONE="SOME KEY 1!!!!"
-          SOME_KEY_TWO="SOME KEY 2@@@@"
-          ENV=${{ inputs.env }}
-          {
-            echo "some_key_one=$SOME_KEY_ONE"
-            echo "some_key_two=$SOME_KEY_TWO"
-            echo "lower_version=${ENV,,}"
-          } >> "$GITHUB_OUTPUT"
-
-  echo_jon:
-    needs: define_arguments
-    runs-on: ubuntu-latest
-    steps:
-      - run: |        
-          echo "ONE: ${{ needs.define_arguments.outputs.some_key_one }}"
-          echo "TWO: ${{ needs.define_arguments.outputs.some_key_two }}"
-          echo "ENV: ${{ needs.define_arguments.outputs.lower_version }}"
+  test:
+    uses: ./.github/workflows/test_work_call.yaml
+    with:
+      flavor: ${{ inputs.env }}
