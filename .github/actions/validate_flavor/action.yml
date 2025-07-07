@@ -9,12 +9,12 @@ inputs:
 outputs:
   normalized_flavor:
     description: 'Normalized (lowercase) flavor'
-    value: ${{ steps.validate.outputs.normalized_flavor }}
+    value: ${{ steps.normalize.outputs.normalized_flavor }}
 
 runs:
   using: 'composite'
   steps:
-    - id: validate
+    - name: validate
       shell: bash
       env:
         INPUT_FLAVOR: ${{ inputs.flavor }}
@@ -26,7 +26,8 @@ runs:
         echo "❌ Invalid flavor: $INPUT_FLAVOR. Supported: $ALLOWED_FLAVORS. ⚠️ Note: Remove any extra spaces."
         exit 1
 
-    - id: normalize
+    - name: normalize
+      id: normalize
       shell: bash
       env:
         INPUT_FLAVOR: ${{ inputs.flavor }}

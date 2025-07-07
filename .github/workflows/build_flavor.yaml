@@ -120,7 +120,7 @@ jobs:
           fetch-depth: 2
 
       - name: build
-        uses: ./github/actions/build_ios/
+        uses: ./.github/actions/build_ios/
         with:
           ENV: ${{ needs.define_flavor_arguments.outputs.normalized_flavor }}
           DEV_ENV: ${{ needs.define_flavor_arguments.outputs.dev_override_flavor }}
