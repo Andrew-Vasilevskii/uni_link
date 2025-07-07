@@ -73,18 +73,15 @@ jobs:
           API_FLAVOR=$INPUT_FLAVOR
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
           
-          # --- 2️⃣Set API keys based on API_KEY_FLAVOR ---
-          case "$API_FLAVOR" in
-            DEV)
-               echo "some_secret=$SECRET1"  >> "$GITHUB_OUTPUT"
-              ;;
-            TEST)
-              SOME_SECRET=$SECRET2
-              ;;
-            PROD)
-              SOME_SECRET="TESTING"
-              ;;
-          esac
+          if [[ "${{ inputs.env }}" == "DEV" ]]; then
+            SOME_SECRET=${{ secrets.SECRET1 }}
+          elif [[ "${{ inputs.env }}" == "BETA" ]]; then
+            SOME_SECRET=${{ secrets.SECRET2 }}
+          elif [[ "${{ inputs.env }}" == "PROD" ]]; then
+            SOME_SECRET="TESTING"
+          fi
+          
+
           
           # --- 4️⃣Export outputs ---
           {
