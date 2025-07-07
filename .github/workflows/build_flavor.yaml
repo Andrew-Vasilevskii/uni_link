@@ -53,17 +53,6 @@ jobs:
         with:
           flavor: ${{ inputs.dev_override_env }}
 
-      - name: Huawei is PROD only
-        shell: bash
-        env:
-          INPUT_HUAWEI: ${{ inputs.huawei }}
-          INPUT_FLAVOR: ${{ inputs.env }}
-        run: |
-          if [ "$INPUT_HUAWEI" = "true" ] && [ "$INPUT_FLAVOR" != "PROD" ]; then
-            echo "❌ Huawei build can only be used with PROD flavor!"
-            exit 1
-          fi
-
   define_flavor_arguments:
     needs: validate-inputs
     runs-on: ubuntu-latest
@@ -83,11 +72,6 @@ jobs:
         run: |
           API_FLAVOR=$INPUT_FLAVOR
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
-          
-          # --- 1️⃣Set API_KEY_FLAVOR ---
-          if [ "$FLAVOR" = "DEV" ] && [ -n "$DEV_OVERRIDE_FLAVOR" ]; then
-            API_FLAVOR=$DEV_OVERRIDE_FLAVOR
-          fi
           
           # --- 2️⃣Set API keys based on API_KEY_FLAVOR ---
           case "$API_FLAVOR" in
