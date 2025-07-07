@@ -18,7 +18,10 @@ description: 'deploys the app to the appstore'
 runs:
   using: "composite"
   steps:
-    - run: |
+    - env:
+        SOME_SECRET: ${{ inputs.SOME_SECRET }}
+        SOME_SECRET2: ${{ inputs.SOME_SECRET2 }}
+      run: |
         echo "ENV ${{ inputs.ENV }}"
         echo "DEV_ENV ${{ inputs.DEV_ENV }}"
         if [[ -z "$SOME_SECRET" ]]; then
