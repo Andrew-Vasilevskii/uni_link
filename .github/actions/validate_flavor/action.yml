@@ -9,6 +9,7 @@ inputs:
 outputs:
   normalized_flavor:
     description: 'Normalized (lowercase) flavor'
+    value: ${{ steps.validate.outputs.normalized_flavor }}
 
 runs:
   using: 'composite'

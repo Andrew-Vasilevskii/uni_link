@@ -119,9 +119,9 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 2
 
-      - name: print
-        shell: bash
-        run: |
-          echo ${{ needs.define_flavor_arguments.outputs.normalized_flavor }}
-          echo ${{ needs.define_flavor_arguments.outputs.dev_override_flavor }}
-          echo ${{ needs.define_flavor_arguments.outputs.some_secret }}
+      - name: build
+        uses: ./github/actions/build_ios/
+        with:
+          ENV: ${{ needs.define_flavor_arguments.outputs.normalized_flavor }}
+          DEV_ENV: ${{ needs.define_flavor_arguments.outputs.dev_override_flavor }}
+          SOME_SECRET: ${{ needs.define_flavor_arguments.outputs.some_secret }}

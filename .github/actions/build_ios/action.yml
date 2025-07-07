@@ -1,0 +1,23 @@
+name: 'Build ios'
+inputs:
+  deploy:
+    description: 'Defines if deploy action should take place'
+    type: boolean
+    required: true
+  ENV:
+    required: true
+  DEV_ENV:
+    description: 'Only used in deploy_dev fastlane script'
+    default: "DEV"
+  SOME_SECRET:
+    required: true
+
+description: 'deploys the app to the appstore'
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        echo "ENV ${{ inputs.ENV }}"
+        echo "DEV_ENV ${{ inputs.DEV_ENV }}"
+        echo "SOME_SECRET ${{ inputs.SOME_SECRET }}"
+      shell: bash
