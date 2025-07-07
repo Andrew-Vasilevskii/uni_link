@@ -1,0 +1,33 @@
+name: Validate Flavor
+description: 'Validates flavor is DEV, TEST, PROD and outputs lowercase flavor.'
+
+inputs:
+  flavor:
+    description: 'Flavor to validate'
+    required: true
+
+outputs:
+  normalized_flavor:
+    description: 'Normalized (lowercase) flavor'
+
+runs:
+  using: 'composite'
+  steps:
+    - id: validate
+      shell: bash
+      env:
+        INPUT_FLAVOR: ${{ inputs.flavor }}
+        ALLOWED_FLAVORS: 'DEV TEST PROD'
+      run: |
+        IFS=' ' read -r -a allowed_array <<< "$ALLOWED_FLAVORS"
+        for f in "${allowed_array[@]}"; do [ "$INPUT_FLAVOR" == "$f" ] && exit 0; done
+
+        echo "❌ Invalid flavor: $INPUT_FLAVOR. Supported: $ALLOWED_FLAVORS. ⚠️ Note: Remove any extra spaces."
+        exit 1
+
+    - id: normalize
+      shell: bash
+      env:
+        INPUT_FLAVOR: ${{ inputs.flavor }}
+      run: |
+        echo "normalized_flavor=${INPUT_FLAVOR,,}" >> $GITHUB_OUTPUT
