@@ -73,20 +73,14 @@ jobs:
           API_FLAVOR=$INPUT_FLAVOR
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
           
-          if [[ "${{ inputs.env }}" == "DEV" ]]; then
-            echo "some_secret=${{ secrets.SECRET1 }}" >> $GITHUB_OUTPUT
-          elif [[ "${{ inputs.env }}" == "BETA" ]]; then
-            SOME_SECRET=${{ secrets.SECRET2 }}
-          elif [[ "${{ inputs.env }}" == "PROD" ]]; then
-            SOME_SECRET="TESTING"
-          fi
-          
+
 
           
           # --- 4️⃣Export outputs ---
           {
             echo "normalized_flavor=$NORMALIZED_FLAVOR"
             echo "dev_override_flavor=$API_FLAVOR"
+            echo "some_secret=${{ secrets.SECRET1 }}"
           } >> "$GITHUB_OUTPUT"
 
   build_ios:
