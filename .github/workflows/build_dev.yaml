@@ -16,7 +16,7 @@ jobs:
     uses: ./.github/workflows/build_flavor.yaml
     secrets: inherit
     with:
-      env: ${{ github.events.inputs.env }}
+      env: ${{ github.event.inputs.env }}
       deploy: false
       ios: true
       android: true
