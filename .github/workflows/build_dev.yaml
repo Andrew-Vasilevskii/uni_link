@@ -4,14 +4,19 @@ permissions: write-all
 
 on:
   workflow_dispatch:
-
+    inputs:
+      env:
+        type: choice
+        options:
+          - DEV
+          - BETA
+          - PROD
 jobs:
   build_dev:
-    needs: lint
     uses: ./.github/workflows/build_flavor.yaml
     secrets: inherit
     with:
-      env: DEV
+      env: ${{ github.events.inputs.env }}
       deploy: false
       ios: true
       android: true
