@@ -72,10 +72,7 @@ jobs:
         run: |
           API_FLAVOR=$INPUT_FLAVOR
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
-          
-
-
-          
+      
           # --- 4️⃣Export outputs ---
           {
             echo "normalized_flavor=$NORMALIZED_FLAVOR"
@@ -94,10 +91,33 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 2
 
+      - name: Set Platform secrets
+        id: set-platform-secrets
+        env:
+          flavor: ${{ needs.define_flavor_arguments.normalized_flavor }}
+        run: |
+          # --- 2️⃣Set API keys based on API_KEY_FLAVOR ---
+          case "$flavor" in
+            dev)
+              some_secret=${{ secrets.SECRET1 }}
+              ;;
+            test)
+              SOME_SECRET=${{ secrets.SECRET2 }}
+              ;;
+            prod)
+              SOME_SECRET="TESTING"
+              ;;
+          esac
+          
+          # --- 4️⃣Export outputs ---
+          {
+            echo "some_secret=${{ secrets.SECRET1 }}"
+          } >> "$GITHUB_OUTPUT"
+
       - name: build
         uses: ./.github/actions/build_ios/
         with:
           ENV: ${{ needs.define_flavor_arguments.outputs.normalized_flavor }}
           DEV_ENV: ${{ needs.define_flavor_arguments.outputs.dev_override_flavor }}
-          SOME_SECRET: ${{ needs.define_flavor_arguments.outputs.some_secret }}
+          SOME_SECRET: ${{ steps.set-platform-secrets.outputs.some_secret }}
           SOME_SECRET2: ${{ secrets.SECRET2 }}
