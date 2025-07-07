@@ -76,7 +76,7 @@ jobs:
           # --- 2️⃣Set API keys based on API_KEY_FLAVOR ---
           case "$API_FLAVOR" in
             DEV)
-               echo "some_secret=$SOME_SECRET"  >> "$GITHUB_OUTPUT"
+               echo "some_secret=$SECRET1"  >> "$GITHUB_OUTPUT"
               ;;
             TEST)
               SOME_SECRET=$SECRET2
