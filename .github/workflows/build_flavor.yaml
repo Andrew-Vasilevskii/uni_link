@@ -72,14 +72,14 @@ jobs:
       dev_override_flavor: ${{ steps.set.outputs.dev_override_flavor }}
       some_secret: ${{ steps.set.outputs.some_secret }}
     env:
+      INPUT_FLAVOR: ${{ inputs.env }}
+      DEV_OVERRIDE_FLAVOR: ${{ inputs.dev_override_env }}
+
       SECRET1: ${{ secrets.SECRET1 }}
       SECRET2: ${{ secrets.SECRET2 }}
     steps:
       - name: Set values
         id: set
-        env:
-          INPUT_FLAVOR: ${{ inputs.env }}
-          DEV_OVERRIDE_FLAVOR: ${{ inputs.dev_override_env }}
         run: |
           API_FLAVOR=$INPUT_FLAVOR
           NORMALIZED_FLAVOR=${{ needs.validate-inputs.outputs.normalized_flavor }}
@@ -107,7 +107,6 @@ jobs:
             echo "normalized_flavor=$NORMALIZED_FLAVOR"
             echo "dev_override_flavor=$API_FLAVOR"
             echo "some_secret=$SOME_SECRET"
-  
           } >> "$GITHUB_OUTPUT"
 
   build_ios:

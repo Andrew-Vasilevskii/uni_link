@@ -19,7 +19,6 @@ runs:
     - run: |
         echo "ENV ${{ inputs.ENV }}"
         echo "DEV_ENV ${{ inputs.DEV_ENV }}"
-        echo "SOME_SECRET ${{ inputs.SOME_SECRET }}"
         if [[ -z "$SOME_SECRET" ]]; then
           echo "SOME_SECRET is empty"
         else 
