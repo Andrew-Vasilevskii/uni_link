@@ -11,6 +11,8 @@ jobs:
   validate-inputs:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       - name: Validate
         uses: ./.github/actions/validate_deploy_targets/
         with:
