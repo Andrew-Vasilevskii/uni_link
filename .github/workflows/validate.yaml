@@ -9,6 +9,9 @@ on:
         type: boolean
 jobs:
   validate-inputs:
-    uses: ./.github/actions/validate_deploy_targets/
-    with:
-      targets: "${{ inputs.android }} ${{ inputs.ios }} ${{ inputs.web }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate
+        uses: ./.github/actions/validate_deploy_targets/
+        with:
+          targets: "${{ inputs.android }} ${{ inputs.ios }} ${{ inputs.web }}"
