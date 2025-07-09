@@ -5,8 +5,12 @@ on:
     inputs:
       ios:
         type: boolean
+        required: true
+        default: true
       android:
         type: boolean
+        required: true
+        default: true
 
 #      flavor:
 #        description: "Environment. Must be: DEV, TEST, PROD"
