@@ -20,7 +20,7 @@ jobs:
       - name: test
         shell: bash
         run: |
-          echo "ios: ${{ inputs.ios }}
+          echo "ios: ${{ inputs.ios }}"
           echo "android: ${{ inputs.android }}"
 #  validate-inputs:
 #    runs-on: ubuntu-latest
