@@ -1,0 +1,21 @@
+name: Validate deploy targets
+description: 'Validates that at least 1 target to deploy is provided'
+
+inputs:
+  targets:
+    description: 'Space-separated list of booleans, e.g. "true false true"'
+    type: string
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name:  Validate at least 1 is true
+      shell: bash
+      env:
+        platforms_build: "${{ inputs.android }} ${{ inputs.ios }} ${{ inputs.web }}"
+      run: |
+        [[ "${{ inputs.targets }}" == *true* ]] || {
+          echo "❌ At least 1 deploy target should be provided"
+          exit 1
+        }

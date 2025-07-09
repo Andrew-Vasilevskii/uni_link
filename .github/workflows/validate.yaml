@@ -9,13 +9,6 @@ on:
         type: boolean
 jobs:
   validate-inputs:
-    runs-on: ubuntu-latest
-    env:
-      platforms_build: "${{ inputs.android }} ${{ inputs.ios }} ${{ inputs.web }}"
-    steps:
-      - name: Fail if none are true
-        run: |
-          [[ "$platforms_build" == *true* ]] || {
-            echo "❌ No platform is true"
-            exit 1
-          }
+    uses: ./.github/actions/validate_deploy_targets/
+    with:
+      targets: "${{ inputs.android }} ${{ inputs.ios }} ${{ inputs.web }}"
