@@ -13,7 +13,16 @@ on:
         default: true
 
 jobs:
+  first:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test
+        shell: bash
+        run: |
+          echo 'first'
+
   test:
+    needs: first
     uses: ./.github/workflows/test_work_call.yaml
     with:
       ios: ${{ inputs.ios }}
