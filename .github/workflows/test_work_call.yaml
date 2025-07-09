@@ -3,27 +3,40 @@ name: Test workflow on call
 on:
   workflow_call:
     inputs:
-      flavor:
-        description: "Environment. Must be: DEV, TEST, PROD"
-        required: true
-        type: string
+      ios:
+        type: boolean
+      android:
+        type: boolean
+
+#      flavor:
+#        description: "Environment. Must be: DEV, TEST, PROD"
+#        required: true
+#        type: string
 
 jobs:
-  validate-inputs:
+  test:
     runs-on: ubuntu-latest
-    outputs:
-      flavor: ${{ inputs.flavor }}
     steps:
-      - id: validate
+      - name: test
         shell: bash
-        env:
-          INPUT_FLAVOR: ${{ inputs.flavor }}
-          ALLOWED_FLAVORS: "DEV TEST PROD"
         run: |
-          IFS=' ' read -r -a allowed_array <<< "$ALLOWED_FLAVORS"
-          for f in "${allowed_array[@]}"; do [ "$INPUT_FLAVOR" == "$f" ] && exit 0; done
-          
-          echo "❌ Invalid flavor: $INPUT_FLAVOR. Supported: $ALLOWED_FLAVORS"
-          exit 1
+          echo "ios: ${{ inputs.ios }}
+          echo "android: ${{ inputs.android }}"
+#  validate-inputs:
+#    runs-on: ubuntu-latest
+#    outputs:
+#      flavor: ${{ inputs.flavor }}
+#    steps:
+#      - id: validate
+#        shell: bash
+#        env:
+#          INPUT_FLAVOR: ${{ inputs.flavor }}
+#          ALLOWED_FLAVORS: "DEV TEST PROD"
+#        run: |
+#          IFS=' ' read -r -a allowed_array <<< "$ALLOWED_FLAVORS"
+#          for f in "${allowed_array[@]}"; do [ "$INPUT_FLAVOR" == "$f" ] && exit 0; done
+#
+#          echo "❌ Invalid flavor: $INPUT_FLAVOR. Supported: $ALLOWED_FLAVORS"
+#          exit 1
 
 

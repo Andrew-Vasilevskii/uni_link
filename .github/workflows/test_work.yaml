@@ -3,11 +3,14 @@ name: Test workflow
 on:
   workflow_dispatch:
     inputs:
-      env:
-        type: string
+      ios:
+        type: boolean
+      android:
+        type: boolean
 
 jobs:
   test:
     uses: ./.github/workflows/test_work_call.yaml
     with:
-      flavor: ${{ inputs.env }}
+      ios: ${{ inputs.ios }}
+      android: ${{ inputs.android }}
