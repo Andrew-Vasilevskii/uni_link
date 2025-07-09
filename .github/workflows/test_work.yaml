@@ -13,16 +13,19 @@ on:
         default: true
 
 jobs:
-  first:
+  validate-inputs:
     runs-on: ubuntu-latest
     steps:
-      - name: test
-        shell: bash
-        run: |
-          echo 'first'
+      - uses: actions/checkout@v4
+
+      - name: Validate deploy targets
+        uses: ./.github/actions/validate_deploy_targets/
+        with:
+          targets: "${{ inputs.android }} ${{ inputs.ios }}"
+
 
   test:
-    needs: first
+    needs: validate-inputs
     uses: ./.github/workflows/test_work_call.yaml
     with:
       ios: ${{ inputs.ios }}
