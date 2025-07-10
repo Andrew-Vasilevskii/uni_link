@@ -8,10 +8,9 @@ on:
         description: version for store
         required: true
       increase_build_number:
-        type: boolean
+        type: string
         description: increase the build number
         required: true
-        default: true
 
 jobs:
   set-version:

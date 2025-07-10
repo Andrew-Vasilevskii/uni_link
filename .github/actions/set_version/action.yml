@@ -93,3 +93,10 @@ runs:
           echo "new_build_number=$new_build"
           echo "should_change=$should_change"
         } >> "$GITHUB_OUTPUT"
+
+    - name: print
+      shell: bash
+      run: |
+        echo ${{ steps.bump.new_version }}
+        echo ${{ steps.bump.new_build_number }}
+        echo ${{ steps.bump.should_change }}
