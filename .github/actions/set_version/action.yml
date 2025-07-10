@@ -1,84 +1,95 @@
-name: 'set version'
+name: 'Set version'
 inputs:
   version:
-    type: string
+    description: 'Version which should be used. If "current" is used the version in pubspec.yaml will be used.'
     required: true
-    default: "current"
-    description: "Version which should be used. If 'current' is used the version in pubspec.yaml will be used."
+    default: 'current'
   increase_build_number:
-    type: boolean
+    description: 'If true the buildnumber will be increased by one.'
     required: true
-    description: "If true the buildnumber will be increased by one."
   tag_prefix:
-    type: boolean
-    requried: true
-    description: "Prefix which should be used for the tag."
+    description: 'Prefix which should be used for the tag.'
+    required: true
 
 description: 'increases the buildnumber by one if increase_build_number and set the version in pubspec, pushes, and tag the changes'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
+    - name: Validate increase_build_number
+      id: validate-increase-build
+      shell: bash
+      env:
+        VALUE: ${{ inputs.increase_build_number }}
+      run: |
+        if [[ "$VALUE" != "true" && "$VALUE" != "false" ]]; then
+          echo "❌ Invalid value for increase_build_number: '$VALUE'. Must be 'true' or 'false'."
+          exit 1
+        fi
+
+    - name: Trim version input
+      id: trim-input
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: echo "trimmed_version=${VERSION// /}" >> $GITHUB_OUTPUT
+
+    - name: Validate version
+      shell: bash
+      env:
+        CURRENT_VALUE: 'current'
+        TRIMMED_VERSION: ${{ steps.trim-input.outputs.trimmed_version }}
+      run: |
+        if [[ "$TRIMMED_VERSION" != $CURRENT_VALUE ]]; then
+          if [[ ! "$TRIMMED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid version: '$TRIMMED_VERSION'. Must be '$CURRENT_VALUE' or match 'x.y.z'"
+            exit 1
+          fi
+        fi
+
     - name: Extract version
       id: extract-version
       shell: bash
       env:
-        FILE: "pubspec.yaml"
+        FILE: 'pubspec.yaml'
       run: |
-        VERSION_VALUE=$(grep '^version:' "$FILE" | cut -d':' -f2 | tr -d ' ')
-        VERSION="${VERSION_VALUE%%+*}"
-        BUILD_NUMBER="${VERSION_VALUE##*+}"
+        version_value=$(grep '^version:' "$FILE" | cut -d':' -f2 | tr -d ' ')
+        version="${version_value%%+*}"
+        build_number="${version_value##*+}"
         
-        echo "CURRENT_VERSION=$VERSION" >> "$GITHUB_OUTPUT"
-        echo "CURRENT_BUILD=$BUILD_NUMBER" >> "$GITHUB_OUTPUT"
+        echo "current_version=$version" >> "$GITHUB_OUTPUT"
+        echo "current_build=$build_number" >> "$GITHUB_OUTPUT"
 
     - name: Decide version bump
       id: bump
       shell: bash
       env:
-        CURRENT_VALUE: "current"
+        CURRENT_VALUE: 'current'
         INPUT_VERSION: ${{ inputs.version }}
-        CURRENT_VERSION: ${{ steps.extract-version.outputs.CURRENT_VERSION }}
-        CURRENT_BUILD: ${{ steps.extract-version.outputs.CURRENT_BUILD }}
+        CURRENT_VERSION: ${{ steps.extract-version.outputs.current_version }}
+        CURRENT_BUILD: ${{ steps.extract-version.outputs.current_build }}
         INCREASE_BUILD_NUMBER: ${{ inputs.increase_build_number }}
-      run: |                
+      run: |
         # Decide new version
-        NEW_VERSION="$INPUT_VERSION"
+        new_version="$INPUT_VERSION"
         if [ "$INPUT_VERSION" = $CURRENT_VALUE ]; then
-          NEW_VERSION="$CURRENT_VERSION"
+          new_version="$CURRENT_VERSION"
         fi
         
         # Decide new build
-        NEW_BUILD="$CURRENT_BUILD"
+        new_build="$CURRENT_BUILD"
         if $INCREASE_BUILD_NUMBER; then
-          NEW_BUILD=$((CURRENT_BUILD + 1))
+          new_build=$((CURRENT_BUILD + 1))
         fi
         
         # Decide if anything changed
-        if [ "$NEW_VERSION" != "$CURRENT_VERSION" ] || [ "$NEW_BUILD" != "$CURRENT_BUILD" ]; then
-         SHOULD_CHANGE=true
+        if [ "$new_version" != "$CURRENT_VERSION" ] || [ "$new_build" != "$CURRENT_BUILD" ]; then
+         should_change=true
         else
-         SHOULD_CHANGE=false
+         should_change=false
         fi
-                
-        echo "NEW_VERSION=$NEW_VERSION" >> "$GITHUB_OUTPUT"
-        echo "NEW_BUILD_NUMBER=$NEW_BUILD" >> "$GITHUB_OUTPUT"
-        echo "SHOULD_CHANGE=$SHOULD_CHANGE" >> "$GITHUB_OUTPUT"
-
-    - name: set version in pubspec and tag
-      shell: bash
-      if: ${{ steps.bump.outputs.SHOULD_CHANGE == 'true' }}
-      env:
-        FILE: "pubspec.yaml"
-        VERSION: ${{ steps.bump.outputs.NEW_VERSION }}
-        BUILD_NUMBER: ${{ steps.bump.outputs.NEW_BUILD }}
-        TAG_PREFIX: ${{ inputs.tag_prefix }}
-      run: |
-        # Set new version in file
-        sed -i -E "s/version: .*$/version: $VERSION+$BUILD_NUMBER/" $FILE
         
-        git config --global user.name 'github action'
-        git config --global user.email 'developer@hansefit.de'
-        
-        git commit -am "$VERSION $BUILD_NUMBER" || true
-        git tag "$TAG_PREFIX-$VERSION($BUILD_NUMBER)"
-        git push || true
+        {
+          echo "new_version=$new_version"
+          echo "new_build_number=$new_build"
+          echo "should_change=$should_change"
+        } >> "$GITHUB_OUTPUT"
