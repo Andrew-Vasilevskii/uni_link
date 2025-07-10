@@ -97,6 +97,6 @@ runs:
     - name: print
       shell: bash
       run: |
-        echo ${{ steps.bump.new_version }}
-        echo ${{ steps.bump.new_build_number }}
-        echo ${{ steps.bump.should_change }}
+        echo ${{ steps.bump.outputs.new_version }}
+        echo ${{ steps.bump.outputs.new_build_number }}
+        echo ${{ steps.bump.outputs.should_change }}
