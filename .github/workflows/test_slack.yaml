@@ -19,9 +19,6 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            link_names: false
-            unfurl_links: false
-            unfurl_media: false
             channel: ${{ inputs.channel_id }}
             text: "Deployment started :eyes:"
             attachments:
@@ -58,9 +55,10 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
+            link_names: true
             channel: ${{ inputs.channel_id }}
             thread_ts: "${{ steps.launch_sequence.outputs.ts }}"
-            text: "@channel Deployment finished! WE ARE DONE!!"
+            text: "<!channel> Deployment finished! WE ARE DONE!!"
             attachments:
               - color: "28a745"
                 fields:
