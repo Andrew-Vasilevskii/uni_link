@@ -55,7 +55,7 @@ jobs:
         uses: slackapi/slack-github-action@v2.1.1
         with:
           errors: true
-          method: chat.update
+          method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ inputs.channel_id }}
