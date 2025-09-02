@@ -15,6 +15,7 @@ jobs:
         id: launch_sequence
         uses: slackapi/slack-github-action@v2.1.1
         with:
+          errors: true
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
@@ -33,6 +34,7 @@ jobs:
       - name: Update the original message with success
         uses: slackapi/slack-github-action@v2.1.1
         with:
+          errors: true
           method: chat.update
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
