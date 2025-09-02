@@ -1,0 +1,47 @@
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel_id:
+        description: ''
+        type: string
+        required: true
+
+jobs:
+  testing:
+    runs-on: ubuntu-lates
+    steps:
+      - name: Initiate the deployment launch sequence
+        id: launch_sequence
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            text: "Deployment started :eyes:"
+            attachments:
+              - color: "dbab09"
+                fields:
+                  - title: "Status"
+                    short: true
+                    value: "In Progress"
+
+      - name: Countdown until launch
+        run: sleep 20
+
+      - name: Update the original message with success
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            channel: ${{ inputs.channel_id }}
+            ts: "${{ steps.launch_sequence.outputs.ts }}"
+            text: "Deployment finished! :rocket:"
+            attachments:
+              - color: "28a745"
+                fields:
+                  - title: "Status"
+                    short: true
+                    value: "Completed"
