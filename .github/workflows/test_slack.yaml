@@ -19,7 +19,7 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            channel: ${{ secrets.SLACK_CHANNEL_ID }}
+            channel: ${{ inputs.channel_id }}
             text: "Deployment started :eyes:"
             attachments:
               - color: "dbab09"
