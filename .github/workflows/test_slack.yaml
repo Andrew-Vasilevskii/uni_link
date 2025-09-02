@@ -66,4 +66,4 @@ jobs:
                 fields:
                   - title: "Status"
                     short: true
-                    value: "Completed"
+                    value: "@channel Completed"
