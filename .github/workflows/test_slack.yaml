@@ -9,7 +9,7 @@ on:
 
 jobs:
   testing:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Initiate the deployment launch sequence
         id: launch_sequence
