@@ -55,13 +55,9 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            link_names: true
-            channel: ${{ inputs.channel_id }}
-            thread_ts: "${{ steps.launch_sequence.outputs.ts }}"
-            text: "<!channel> Deployment finished! WE ARE DONE!!"
-            attachments:
-              - color: "28a745"
-                fields:
-                  - title: "Status"
-                    short: true
-                    value: "Completed"
+            {
+              "link_names": true,
+              "channel": "${{ inputs.channel_id }}",
+              "thread_ts": "${{ steps.launch_sequence.outputs.ts }}",
+              "text": "<!channel> WE ARE DONE!!"
+            }
