@@ -19,7 +19,9 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            silent: true
+            link_names: false
+            unfurl_links: false
+            unfurl_media: false
             channel: ${{ inputs.channel_id }}
             text: "Deployment started :eyes:"
             attachments:
