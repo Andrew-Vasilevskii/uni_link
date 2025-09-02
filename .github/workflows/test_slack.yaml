@@ -32,7 +32,7 @@ jobs:
                     value: "In Progress"
 
       - name: Countdown until launch
-        run: sleep 20
+        run: sleep 10
 
       - name: Update the original message with success
         uses: slackapi/slack-github-action@v2.1.1
@@ -60,10 +60,10 @@ jobs:
           payload: |
             channel: ${{ inputs.channel_id }}
             thread_ts: "${{ steps.launch_sequence.outputs.ts }}"
-            text: "Deployment finished! WE ARE DONE!!"
+            text: "@channel Deployment finished! WE ARE DONE!!"
             attachments:
               - color: "28a745"
                 fields:
                   - title: "Status"
                     short: true
-                    value: "@channel Completed"
+                    value: "Completed"
