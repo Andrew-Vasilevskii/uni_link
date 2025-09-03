@@ -145,6 +145,7 @@ jobs:
         shell: bash
         run: |
           echo 'load-legal-documents'
+          exit 1
 
   load-partners:
     name: Load partners
