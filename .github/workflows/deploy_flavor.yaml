@@ -217,12 +217,9 @@ jobs:
                         "type": "mrkdwn",
                         "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
                       }
-                    }
+                    },
+                    ${{ needs.notify-start.outputs.failed_actions_button }}
                   ]
-                },
-                {
-                  "color": "#CCCCCC",
-                  "blocks": [${{ needs.notify-start.outputs.failed_actions_button }}]
                 }
               ]
             }
