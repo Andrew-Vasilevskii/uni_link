@@ -159,6 +159,8 @@ jobs:
         run: |
           echo ' load-partners'
           sleep 3
+          exit 1
+
 
   set-version:
     name: Bump version
