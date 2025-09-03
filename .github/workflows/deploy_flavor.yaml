@@ -272,7 +272,18 @@ jobs:
             local name=$1
             local enabled=$2
             local result=$3
-
+          
+            if [[ "$enabled" == "true" ]]; then
+              local status="Skipped"
+              if [[ "$result" == "success" ]]; then
+                status="$SUCCESS_EMOJI"
+                let success_count++
+              elif [[ "$result" == "failure" ]]; then
+                status="$FAILED_EMOJI"
+                let failure_count++
+              fi
+  
+            fi
           }
           
           process_platform "iOS" "$IOS_ENABLED" "$IOS_RESULT"
@@ -288,12 +299,12 @@ jobs:
             # ALL FAILED
             color="$FAILED_ATTACHMENT_COLOR"
             summary_text="*All builds failed*"
-            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+            accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           else
             # MIXED RESULTS (at least one failure)
             color="$MIXED_ATTACHMENT_COLOR"
             summary_text="*Builds completed with some failures*"
-            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+            accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           fi
           
           {
