@@ -106,13 +106,10 @@ jobs:
         run: |
           actions_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           button='{
-                    "type": "actions",
-                    "elements": [{
-                        "type": "button",
-                        "style": "danger",
-                        "text": {"type": "plain_text","text": "View Workflow Run"},
-                        "url": "'"$actions_url"'"
-                    }]
+                    "type": "button",
+                    "style": "danger",
+                    "text": {"type": "plain_text","text": "View Workflow Run"},
+                    "url": "'"$actions_url"'"
                   }'
           
           echo "failed_actions_button<<END" >> "$GITHUB_OUTPUT"
@@ -202,23 +199,38 @@ jobs:
                       "text": {
                         "type": "mrkdwn",
                         "text": "*Pre-build Failed*\nOne of the initial setup steps failed. The build was not started."
+                      },
+                      "accessory": ${{ needs.notify-start.outputs.failed_actions_button }}
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*Load legal documents:*"
+                      },
+                      "accessory": {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
+                        }
                       }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
+                        "text": "*Load partners:*"
+                      },
+                      "accessory": {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
+                        }
                       }
                     },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
-                      }
-                    },
-                    ${{ needs.notify-start.outputs.failed_actions_button }}
+                   
                   ]
                 }
               ]
