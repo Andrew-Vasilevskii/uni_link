@@ -75,33 +75,6 @@ jobs:
       failed_actions_button: ${{ steps.failed_actions.outputs.failed_actions_button }}
       message_ts: ${{ steps.slack.outputs.ts }}
     steps:
-
-      - name: 🧪 Isolate the Real Problem
-        run: |
-          echo "--- TEST 1: Proving 'let' is safe ---"
-          set -e # Exit on error
-
-          count=0
-          echo "Count is $count."
-          let count++
-          echo "SUCCESS: The 'let count++' command ran without error. Count is now $count."
-
-          echo "" # Newline for readability
-
-          echo "--- TEST 2: Proving unquoted env vars are the problem ---"
-          # This simulates how GitHub Actions passes an unquoted 'true'
-          # The -e flag on echo interprets backslashes, creating the garbled value
-          CORRUPTED_VAR=$(echo -e "\t\r\u\e")
-
-          echo "Now we will compare a variable to the string 'true'."
-          echo "If they don't match, the environment is corrupted."
-
-          if [[ "$CORRUPTED_VAR" == "true" ]]; then
-            echo "This message will never be seen."
-          else
-            echo "FAILURE: The variable from the environment does not equal 'true'."
-          fi
-
       - name: Build enabled platforms list
         id: build_platforms
         run: |
@@ -304,10 +277,11 @@ jobs:
               local status="Skipped"
               if [[ "$result" == "success" ]]; then
                 status="$SUCCESS_EMOJI"
-                let success_count++
+                success_count=$((success_count + 1))
               elif [[ "$result" == "failure" ]]; then
                 status="$FAILED_EMOJI"
                 let failure_count++
+                failure_count=$((failure_count + 1))
               fi
           
               if [[ -n "$platform_statuses" ]]; then
