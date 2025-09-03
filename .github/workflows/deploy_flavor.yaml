@@ -204,35 +204,6 @@ jobs:
                     },
                     {
                       "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Load legal documents:*"
-                      },
-                      "accessory": {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
-                        }
-                      }
-                    },
-                    {
-                      "type": "section",
-                      "text": {
-                        "type": "mrkdwn",
-                        "text": "*Load partners:*"
-                      },
-                      "accessory": {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
-                        }
-                      }
-                    },
-                    {"type": "divider"},
-                    {
-                      "type": "section",
                       "fields": [
                         {
                           "type": "mrkdwn",
@@ -240,7 +211,7 @@ jobs:
                         },
                         {
                           "type": "plain_text",
-                          "text": "Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
+                          "text": "${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
                         },
                         {
                           "type": "mrkdwn",
@@ -248,7 +219,7 @@ jobs:
                         },
                         {
                           "type": "plain_text",
-                          "text": "Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
+                          "text": "${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
                         }
                       ]
                     }
