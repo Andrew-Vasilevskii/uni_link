@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: calculate-version
     outputs:
-      message_ts: ${{ steps.slack.outputs.message-ts }}
+      message_ts: ${{ steps.slack.outputs.ts }}
     steps:
       - name: Get list of platforms
         id: platforms
@@ -293,6 +293,6 @@ jobs:
           payload: |
             {
               "channel": "${{ inputs.channel_id }}",
-              "thread_ts": "${{ steps.launch_sequence.outputs.ts }}",
+              "thread_ts": "${{ needs.notify-start.outputs.message_ts }}",
               "text": "<!channel> The workflow has completed. Please review the results above."
             }
