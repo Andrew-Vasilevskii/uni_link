@@ -279,8 +279,8 @@ jobs:
             local result=$3
           
             if [[ "$enabled" == "true" ]]; then
-              ((total_builds++))
-              local icon="⚪️"
+                ((total_builds++))
+                local icon
               if [[ "$result" == "success" ]]; then
                 icon="$SUCCESS_EMOJI"
                 ((success_count++))
@@ -288,12 +288,18 @@ jobs:
                 icon="$FAILED_EMOJI"
                 ((failure_count++))
               fi
-              platform_statuses+="${icon} *${name}:* \`${result}\`\n"
+              
+              if [[ -n "$platform_statuses" ]]; then
+                platform_statuses+=","
+              fi
+              
+              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
+              platform_statuses+='{"type": "plain_text","text": "'"$icon"'"}'
             fi
           }
           
-          process_platform "Android" "$ANDROID_ENABLED" "$ANDROID_RESULT"
           process_platform "iOS" "$IOS_ENABLED" "$IOS_RESULT"
+          process_platform "Android" "$ANDROID_ENABLED" "$ANDROID_RESULT"
           process_platform "Huawei" "$HUAWEI_ENABLED" "$HUAWEI_RESULT"
           
           if (( failure_count == 0 && success_count > 0 )); then
@@ -313,35 +319,21 @@ jobs:
             accessory_json=',"accessory": "'"${FAILED_BUTTON}"'"'
           fi
           
-          # Escape newlines for JSON
-          platform_statuses=$(echo -n "$platform_statuses" | sed -z 's/\n/\\n/g')
-          
-          # Construct the final JSON for the 'blocks' array
-          BLOCKS_JSON="[
-            ${DEPLOYMENT_INFO_BLOCK},
-            {\"type\": \"divider\"},
-            {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${summary_text}\"
-              }
-              ${accessory_json}
-            },
-            {
-              \"type\": \"section\",
-              \"text\": {
-                \"type\": \"mrkdwn\",
-                \"text\": \"${platform_statuses}\"
-              }
-            }
-          ]"
-          
-          echo "color=$color" >> $GITHUB_OUTPUT
-          echo "blocks_json=$BLOCKS_JSON" >> $GITHUB_OUTPUT
+          {
+            echo "attachment_color=$color"
+            echo "summary_text=$summary_text"
+            echo "accessory_json=$accessory_json"
+            echo "platform_statuses=$platform_statuses"
+          }  >> $GITHUB_OUTPUT 
 
       - name: Update Slack Message with Build Summary
         uses: slackapi/slack-github-action@v2.1.1
+        env:
+          ATTACHMENT_COLOR: ${{ steps.summary.outputs.attachment_color }}
+          DEPLOYMENT_SUMMARY_BLOCK: ${{ needs.notify-start.outputs.deployment_summary_message_block }}
+          SUMMARY_TEXT: ${{ steps.summary.outputs.summary_text }}
+          ACCESSORY_JSON: ${{ steps.summary.outputs.accessory_json }}
+          PLATFORM_STATUSES: ${{ steps.summary.outputs.platform_statuses }}
         with:
           errors: true
           method: chat.update
@@ -352,8 +344,25 @@ jobs:
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "attachments": [
                 {
-                  "color": "${{ steps.summary.outputs.color }}",
-                  "blocks": ${{ steps.summary.outputs.blocks_json }}
+                  "color": "${{ env.ATTACHMENT_COLOR }}",
+                  "blocks": [
+                    ${{ env.DEPLOYMENT_SUMMARY_BLOCK }},
+                    {"type": "divider"},
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "${{ env.SUMMARY_TEXT }}"
+                      }
+                      ${{ env.ACCESSORY_JSON }}
+                    },
+                    {
+                      "type": "section",
+                      "fields": [
+                        ${{ env.PLATFORM_STATUSES }}
+                      ]
+                    }
+                  ]
                 }
               ]
             }
