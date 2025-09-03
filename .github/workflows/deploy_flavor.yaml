@@ -1,0 +1,300 @@
+name: Deploy Flavor
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel_id:
+        description: ''
+        type: string
+        required: true
+      flavor:
+        description: 'Environment. Must be: DEV, BETA, PROD'
+        required: true
+        type: string
+      version:
+        description: 'App version to set for the build (e.g., 1.2.3)'
+        type: string
+        required: true
+      increase_build_number:
+        description: 'Whether to increment the build number'
+        type: boolean
+        required: true
+        default: true
+      android:
+        description: 'Whether to build the Android app'
+        type: boolean
+        default: true
+        required: true
+      ios:
+        description: 'Whether to build the iOS app'
+        type: boolean
+        default: true
+        required: true
+      huawei:
+        description: 'Whether to build the Huawei app'
+        type: boolean
+        default: false
+        required: true
+
+jobs:
+  validate-inputs:
+    name: Validate inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: validate-inputs
+        shell: bash
+        run: |
+          echo 'validate-inputs'
+          sleep 3
+
+  calculate-version:
+    name: Calculate version
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      version: ${{ steps.calculate.outputs.version }}
+      build_number: ${{ steps.calculate.outputs.build }}
+      is_version_changed: ${{ steps.calculate.outputs.is_version_changed}}
+    steps:
+      - name: Calculate version
+        id: calculate
+        shell: bash
+        run: |
+          echo 'Calculate version'
+          {
+              echo "version=1.1.1"
+              echo "build=12"
+              echo "is_version_changed=true"
+          } >> "$GITHUB_OUTPUT"
+
+  notify-start:
+    name: 🔔 Notify Start
+    runs-on: ubuntu-latest
+    needs: calculate-version
+    outputs:
+      message_ts: ${{ steps.slack.outputs.message-ts }}
+    steps:
+      - name: Get list of platforms
+        id: platforms
+        run: |
+          platforms=""
+          if [ "${{ inputs.android }}" == "true" ]; then platforms+=", Android"; fi
+          if [ "${{ inputs.ios }}" == "true" ]; then platforms+=", iOS"; fi
+          if [ "${{ inputs.huawei }}" == "true" ]; then platforms+=", Huawei"; fi
+          
+          echo "list=${platforms:2}" >> $GITHUB_OUTPUT
+
+      - name: Send initial Slack message
+        id: slack
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          errors: true
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "channel": "${{ inputs.channel_id }}",
+              "text": "🚀 Build Started for ${{ inputs.flavor }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "⏳ *Build Initializing: `${{ inputs.flavor }}`*\n*Version*: `${{ needs.calculate-version.outputs.version }}` (`${{ needs.calculate-version.outputs.build_number }}`)\n*Platforms*: `${{ steps.platforms.outputs.list }}`"
+                  }
+                }
+              ]
+            }
+
+  load-legal-documents:
+    name: Load legal Documents
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: load-legal-documents
+        shell: bash
+        run: |
+          echo 'load-legal-documents'
+          sleep 3
+
+  load-partners:
+    name: Load partners
+    needs: validate-inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name:  load-partners
+        shell: bash
+        run: |
+          echo ' load-partners'
+          sleep 3
+
+  set-version:
+    name: Bump version
+    needs: [validate-inputs, calculate-version, load-legal-documents, load-partners]
+    if: ${{ needs.calculate-version.outputs.is_version_changed == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: set-version
+        shell: bash
+        run: |
+          echo 'set-version'
+          sleep 1
+
+  notify-pre-build-failure:
+    name: ❗ Notify Pre-Build Failure
+    runs-on: ubuntu-latest
+    needs: [notify-start, set-version, notify-start, calculate-version]
+    if: failure()
+    steps:
+      - name: Update Slack Message with Failure
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          errors: true
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "channel": "${{ inputs.channel_id }}",
+              "ts": "${{ needs.notify-start.outputs.message_ts }}",
+              "text": "❌ Pre-build step failed for ${{ inputs.flavor }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "❌ *Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow Run"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                      "style": "danger"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  build-with-deploy:
+    name: Build with deploy
+    needs: set-version
+    uses: ./.github/workflows/build_flavor.yaml
+    secrets: inherit
+    with:
+      flavor: ${{ inputs.flavor }}
+      dev_override_flavor: ${{ inputs.dev_override_flavor }}
+      deploy: false
+      android: ${{ inputs.android }}
+      ios: ${{ inputs.ios }}
+      huawei: ${{ inputs.huawei }}
+
+  notify-result:
+    name: 🏁 Notify Result
+    runs-on: ubuntu-latest
+    if: always() && needs.set-version.result == 'success'
+    needs: [set-version, build-with-deploy, notify-start]
+    steps:
+      - name: Prepare Platform Summary
+        id: summary
+        run: |
+          summary=""
+           # Helper function to add a line to the summary
+           add_status_line() {
+             local platform_name=$1
+             local platform_result=$2
+             local icon="⚪️" # Default: Skipped/Not run
+             if [[ "$platform_result" == "success" ]]; then
+               icon="✅"
+             elif [[ "$platform_result" == "failure" ]]; then
+               icon="❌"
+             fi
+             summary+="${icon} *${platform_name}:* \`${platform_result}\`\n"
+           }
+          
+           if [[ "${{ inputs.android }}" == "true" ]]; then
+             add_status_line "Android" "${{ needs.build_step.outputs.android_result }}"
+           fi
+           if [[ "${{ inputs.ios }}" == "true" ]]; then
+             add_status_line "iOS" "${{ needs.build_step.outputs.ios_result }}"
+           fi
+           if [[ "${{ inputs.huawei }}" == "true" ]]; then
+             add_status_line "Huawei" "${{ needs.build_step.outputs.huawei_result }}"
+           fi
+          
+           # Use a special delimiter for multi-line strings in GitHub Actions
+           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+           echo "text<<$EOF" >> "$GITHUB_OUTPUT"
+           echo -e "$summary" >> "$GITHUB_OUTPUT"
+           echo "$EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Update Slack Message with Final Status
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          errors: true
+          method: chat.update
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "channel": "${{ inputs.channel_id }}",
+              "ts": "${{ needs.notify-start.outputs.message_ts }}",
+              "text": "Build for ${{ inputs.flavor }} finished with status: ${{ needs.build_step.result }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ needs.build_step.result == 'success' && '✅' || '❌' }} *Build Finished: `${{ inputs.flavor }}`*\n*Result*: `${{ needs.build_step.result }}`\n*Version*: `${{ needs.calculate-version.outputs.version }}` (`${{ needs.calculate-version.outputs.build_number }}`)"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ steps.summary.outputs.text }}"
+                  }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Workflow Run"
+                      },
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                      "style": "${{ needs.build_step.result == 'failure' && 'danger' || 'primary' }}"
+                    }
+                  ]
+                }
+              ]
+            }
+
+  final-ping:
+    name: 📢 Send Final Ping
+    runs-on: ubuntu-latest
+    if: always() && (needs.notify-result.result != 'skipped' || needs.notify-pre-build-failure.result != 'skipped')
+    needs: [ notify-start, notify-result, notify-pre-build-failure, build_step ]
+    steps:
+      - name: Send threaded reply with channel mention
+        uses: slackapi/slack-github-action@v2.1.1
+        with:
+          errors: true
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
+          payload: |
+            {
+              "channel": "${{ inputs.channel_id }}",
+              "thread_ts": "${{ steps.launch_sequence.outputs.ts }}",
+              "text": "<!channel> The workflow has completed. Please review the results above."
+            }
