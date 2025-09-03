@@ -263,7 +263,40 @@ jobs:
           ANDROID_RESULT: ${{ needs.build-with-deploy.outputs.android_result }}
           HUAWEI_RESULT: ${{ needs.build-with-deploy.outputs.huawei_result }}
         run: |
-          echo "here"
+          success_count=0
+          failure_count=0
+          
+          platform_statuses=""
+          
+          process_platform() {
+            local name=$1
+            local enabled=$2
+            local result=$3
+          
+            if [[ "$enabled" == "true" ]]; then
+                local icon
+              if [[ "$result" == "success" ]]; then
+                icon="$SUCCESS_EMOJI"
+                ((success_count++))
+              elif [[ "$result" == "failure" ]]; then
+                icon="$FAILED_EMOJI"
+                ((failure_count++))
+              fi
+              
+              if [[ -n "$platform_statuses" ]]; then
+                platform_statuses+=","
+              fi
+              
+              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
+              platform_statuses+='{"type": "plain_text","text": "'"$icon"'"}'
+            fi
+          }
+          
+          process_platform "iOS" "$IOS_ENABLED" "$IOS_RESULT"
+          process_platform "Android" "$ANDROID_ENABLED" "$ANDROID_RESULT"
+          process_platform "Huawei" "$HUAWEI_ENABLED" "$HUAWEI_RESULT"
+          
+          
 
       - name: Update Slack Message with Build Summary
         uses: slackapi/slack-github-action@v2.1.1
