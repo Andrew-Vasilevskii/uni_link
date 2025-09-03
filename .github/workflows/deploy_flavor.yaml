@@ -219,9 +219,12 @@ jobs:
                       }
                     }
                   ]
+                },
+                {
+                  "color": "#CCCCCC",
+                  "blocks": [${{ needs.notify-start.outputs.failed_actions_button }}]
                 }
-              ],
-              "blocks": [${{ needs.notify-start.outputs.failed_actions_button }}]
+              ]
             }
 
   build-with-deploy:
