@@ -115,7 +115,9 @@ jobs:
                     }]
                   }
           
-          echo "failed_actions_button=$button" >> $GITHUB_OUTPUT
+          echo "failed_actions_button<<END" >> "$GITHUB_OUTPUT"
+          echo "$button" >> "$GITHUB_OUTPUT"
+          echo "END" >> "$GITHUB_OUTPUT"
 
       - name: Send initial Slack message
         id: slack
@@ -268,11 +270,9 @@ jobs:
              add_status_line "Huawei" "${{ needs.build_step.outputs.huawei_result }}"
            fi
           
-           # Use a special delimiter for multi-line strings in GitHub Actions
-           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-           echo "text<<$EOF" >> "$GITHUB_OUTPUT"
-           echo -e "$summary" >> "$GITHUB_OUTPUT"
-           echo "$EOF" >> "$GITHUB_OUTPUT"
+           echo "text<<END" >> "$GITHUB_OUTPUT"
+           echo "$summary" >> "$GITHUB_OUTPUT"
+           echo "END" >> "$GITHUB_OUTPUT"
 
       - name: Update Slack Message with Final Status
         uses: slackapi/slack-github-action@v2.1.1
