@@ -201,23 +201,24 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
+                        "text": "*Pre-build Failed*\nOne of the initial setup steps failed. The build was not started."
                       }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
+                        "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
                       }
                     },
                     {
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
+                        "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
                       }
-                    }
+                    },
+                    ${{ needs.notify-start.outputs.failed_actions_button }}
                   ]
                 }
               ]
