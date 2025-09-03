@@ -263,7 +263,6 @@ jobs:
           ANDROID_RESULT: ${{ needs.build-with-deploy.outputs.android_result }}
           HUAWEI_RESULT: ${{ needs.build-with-deploy.outputs.huawei_result }}
         run: |
-          set -x 
           success_count=0
           failure_count=0
           
@@ -287,9 +286,9 @@ jobs:
               if [[ -n "$platform_statuses" ]]; then
                 platform_statuses+=","
               fi
-              
-              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
-              platform_statuses+='{"type": "plain_text","text": "'"$status"'"}'
+#
+#              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
+#              platform_statuses+='{"type": "plain_text","text": "'"$status"'"}'
             fi
           }
           
