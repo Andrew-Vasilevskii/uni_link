@@ -65,6 +65,7 @@ jobs:
         shell: bash
         run: |
           echo 'Build android'
+          exit 1
 
   huawei:
     name: Build huawei
@@ -78,7 +79,6 @@ jobs:
         shell: bash
         run: |
           echo 'Build huawei'
-          exit 1
 
   ios:
     name: Build iOS
