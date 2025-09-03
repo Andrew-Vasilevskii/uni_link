@@ -183,9 +183,9 @@ jobs:
           SUCCESS_EMOJI: '✅'
           FAILED_EMOJI: '❌'
         run: |
-          legal_status=${{ needs.load-legal-documents.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
-          partners_status=${{ needs.load-partners.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
-          version_status=${{ needs.set-version.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
+          legal_status="${{ needs.load-legal-documents.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}"
+          partners_status="${{ needs.load-partners.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}"
+          version_status="${{ needs.set-version.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}"
           
           {
             echo "legal=$legal_status"
