@@ -144,7 +144,7 @@ jobs:
   notify-pre-build-failure:
     name: ❗ Notify Pre-Build Failure
     runs-on: ubuntu-latest
-    needs: [notify-start, set-version, notify-start, calculate-version]
+    needs: [notify-start, load-legal-documents, load-partners, set-version, calculate-version]
     if: failure()
     steps:
       - name: Update Slack Message with Failure
@@ -158,29 +158,45 @@ jobs:
               "channel": "${{ inputs.channel_id }}",
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "text": "❌ Pre-build step failed for ${{ inputs.flavor }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "❌ *Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
-                  }
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Workflow Run"
-                      },
-                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                      "style": "danger"
+              "attachments" : [
+                "color": "#E50051",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
                     }
-                  ]
-                }
-              ]
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Load legal documents:*\n Status: "${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Load partners:*\n Status: "${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
+                    }
+                  },
+                  {
+                    "type": "actions",
+                    "elements": [
+                      {
+                        "type": "button",
+                        "text": {
+                          "type": "plain_text",
+                          "text": "View Workflow Run"
+                        },
+                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                        "style": "danger"
+                      }
+                    ]
+                  }
+                ]
             }
 
   build-with-deploy:
