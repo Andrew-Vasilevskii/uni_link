@@ -185,12 +185,10 @@ jobs:
         run: |
           legal_status="${{ needs.load-legal-documents.result == 'success' && env.SUCCESS_EMOJI || env.FAILED_EMOJI }}"
           partners_status="${{ needs.load-partners.result == 'success' && env.SUCCESS_EMOJI || env.FAILED_EMOJI }}"
-          version_status="${{ needs.set-version.result == 'success' && env.SUCCESS_EMOJI || env.FAILED_EMOJI }}"
           
           {
             echo "legal=$legal_status"
             echo "partners=$partners_status"
-            echo "version=$version_status"
           } >> $GITHUB_OUTPUT
 
       - name: Update Slack Message with Failure
@@ -207,7 +205,7 @@ jobs:
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "attachments" : [
                 {
-                  "color": "$ATTACHMENT_COLOR",
+                  "color": "env.ATTACHMENT_COLOR",
                   "blocks": [
                     ${{ needs.notify-start.outputs.deployment_summary_message_block }},
                     {"type": "divider"},
@@ -223,11 +221,9 @@ jobs:
                       "type": "section",
                       "fields": [
                         {"type": "mrkdwn","text": "*Load legal documents:*"},
-                        {"type": "plain_text","text": "${{ steps.statuses.outputs.legal }}"},
+                        {"type": "plain_text","text": ${{ steps.statuses.outputs.legal }}},
                         {"type": "mrkdwn","text": "*Load partners:*"},
-                        {"type": "plain_text","text": ${{ steps.statuses.outputs.partners }}"},
-                        {"type": "mrkdwn","text": "*Set version:*"},
-                        {"type": "plain_text", "text": "${{ steps.statuses.outputs.version }}"}
+                        {"type": "plain_text","text": ${{ steps.statuses.outputs.partners }}}
                       ]
                     }
                   ]
