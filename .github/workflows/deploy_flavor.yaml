@@ -68,25 +68,40 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
   notify-start:
-    name: 🔔 Notify Start
+    name: Notify Start
     runs-on: ubuntu-latest
     needs: calculate-version
     outputs:
       message_ts: ${{ steps.slack.outputs.ts }}
     steps:
-      - name: Get list of platforms
-        id: platforms
+      - name: Build enabled platforms list
+        id: build_platforms
         run: |
           platforms=""
-          if [ "${{ inputs.android }}" == "true" ]; then platforms+=", Android"; fi
           if [ "${{ inputs.ios }}" == "true" ]; then platforms+=", iOS"; fi
+          if [ "${{ inputs.android }}" == "true" ]; then platforms+=", Android"; fi
           if [ "${{ inputs.huawei }}" == "true" ]; then platforms+=", Huawei"; fi
           
           echo "list=${platforms:2}" >> $GITHUB_OUTPUT
 
+      - name: Build deployment info block
+        id: deployment_info
+        shell: bash
+        env:
+          FLAVOR: ${{ inputs.flavor }}
+          VERSION: ${{ needs.calculate-version.outputs.version }}
+          BUILD_NUMBER: ${{ needs.calculate-version.outputs.build_number }}
+          PLATFORMS: ${{ steps.build_platforms.outputs.list }}
+        run: |
+          message="*Flavor*: `$FLAVOR`\n*Version*: `$VERSION($env.BUILD_NUMBER)`\n*Platforms*: `$PLATFORMS`"
+          body="{"type": "section", "text": {"type": "mrkdwn","text": $body_message}}"
+          
+          echo "deployment_summary_message_block=$body" >> $GITHUB_OUTPUT
+
       - name: Send initial Slack message
         id: slack
         uses: slackapi/slack-github-action@v2.1.1
+
         with:
           errors: true
           method: chat.postMessage
@@ -94,15 +109,10 @@ jobs:
           payload: |
             {
               "channel": "${{ inputs.channel_id }}",
-              "text": "🚀 Build Started for ${{ inputs.flavor }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "⏳ *Build Initializing: `${{ inputs.flavor }}`*\n*Version*: `${{ needs.calculate-version.outputs.version }}` (`${{ needs.calculate-version.outputs.build_number }}`)\n*Platforms*: `${{ steps.platforms.outputs.list }}`"
-                  }
-                }
+              "text": ":eyes: *Build Started* for `${{ inputs.flavor }}`",
+              "attachments": [
+                "color": "#f2c214",
+                "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
               ]
             }
 
@@ -142,7 +152,7 @@ jobs:
           sleep 1
 
   notify-pre-build-failure:
-    name: ❗ Notify Pre-Build Failure
+    name: Notify Pre-Build Failure
     runs-on: ubuntu-latest
     needs: [notify-start, load-legal-documents, load-partners, set-version, calculate-version]
     if: failure()
@@ -157,7 +167,7 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
-              "text": "❌ Pre-build step failed for ${{ inputs.flavor }}",
+              "text": "Pre-build step failed for ${{ inputs.flavor }}",
               "attachments" : [
                 "color": "#E50051",
                 "blocks": [
