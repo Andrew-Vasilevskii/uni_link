@@ -111,7 +111,7 @@ jobs:
                         "type": "button",
                         "style": "danger",
                         "text": {"type": "plain_text","text": "View Workflow Run"},
-                        "url": "$actions_url"
+                        "url": "'"$actions_url"'"
                     }]
                   }'
           
