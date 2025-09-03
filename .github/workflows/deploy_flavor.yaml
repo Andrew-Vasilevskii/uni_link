@@ -321,7 +321,9 @@ jobs:
           {
             echo "attachment_color=$color"
             echo "summary_text=$summary_text"
-            echo "accessory_json=$accessory_json"
+            echo "accessory_json<<END"
+            echo "$accessory_json"
+            echo "END"
             echo "platform_statuses=$platform_statuses"
           } >> $GITHUB_OUTPUT 
 
