@@ -230,7 +230,28 @@ jobs:
                         }
                       }
                     },
-                   
+                    {"type": "divider"},
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Load legal documents:*"
+                        },
+                        {
+                          "type": "plain_text",
+                          "text": "Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
+                        },
+                        {
+                          "type": "mrkdwn",
+                          "text": "*Load partners:*"
+                        },
+                        {
+                          "type": "plain_text",
+                          "text": "Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
+                        }
+                      ]
+                    }
                   ]
                 }
               ]
