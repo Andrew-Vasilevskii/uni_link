@@ -73,6 +73,7 @@ jobs:
     needs: calculate-version
     outputs:
       deployment_summary_message_block: ${{ steps.deployment_info.outputs.deployment_summary_message_block }}
+      failed_actions_button: ${{ steps.failed_actions.outputs.failed_actions_button }}
       message_ts: ${{ steps.slack.outputs.ts }}
     steps:
       - name: Build enabled platforms list
@@ -99,6 +100,23 @@ jobs:
           
           echo "deployment_summary_message_block=$body" >> $GITHUB_OUTPUT
 
+      - name: Build failed action button
+        id: failed_actions
+        shell: bash
+        run: |
+          actions_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          button='{
+                    "type": "actions",
+                    "elements": [{
+                        "type": "button",
+                        "text": {"type": "plain_text","text": "View Workflow Run"},
+                        "url": "$actions_url",
+                        "style": "danger"
+                    }]
+                  }
+          
+          echo "failed_actions_button=$button" >> $GITHUB_OUTPUT
+
       - name: Send initial Slack message
         id: slack
         uses: slackapi/slack-github-action@v2.1.1
@@ -110,7 +128,7 @@ jobs:
           payload: |
             {
               "channel": "${{ inputs.channel_id }}",
-              "text": ":eyes: *Build Started* for `${{ inputs.flavor }}`",
+              "text": ":eyes: Build Started",
               "attachments": [
                 {
                   "color": "#f2c214",
@@ -176,6 +194,7 @@ jobs:
                   "color": "#E50051",
                   "blocks": [
                     ${{ needs.notify-start.outputs.deployment_summary_message_block }},
+                    {"type": "divider"},
                     {
                       "type": "section",
                       "text": {
@@ -196,22 +215,11 @@ jobs:
                         "type": "mrkdwn",
                         "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
                       }
-                    },
-                    {
-                      "type": "actions",
-                      "elements": [
-                        {
-                          "type": "button",
-                          "text": {
-                            "type": "plain_text",
-                            "text": "View Workflow Run"
-                          },
-                          "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                          "style": "danger"
-                        }
-                      ]
                     }
                   ]
+                },
+                {
+                  "blocks": [${{ needs.notify-start.outputs.failed_actions_button }}]
                 }
               ]
             }
