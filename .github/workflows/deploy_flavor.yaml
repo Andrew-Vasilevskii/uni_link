@@ -323,7 +323,7 @@ jobs:
             echo "summary_text=$summary_text"
             echo "accessory_json=$accessory_json"
             echo "platform_statuses=$platform_statuses"
-          }  >> $GITHUB_OUTPUT 
+          } >> $GITHUB_OUTPUT 
 
       - name: Update Slack Message with Build Summary
         uses: slackapi/slack-github-action@v2.1.1
@@ -367,7 +367,7 @@ jobs:
             }
 
   final-ping:
-    name: 📢 Send Final Ping
+    name: Send Final Ping
     runs-on: ubuntu-latest
     if: always() && (needs.notify-result.result != 'skipped' || needs.notify-pre-build-failure.result != 'skipped')
     needs: [ notify-start, notify-pre-build-failure, build-with-deploy, notify-build-result]
@@ -382,5 +382,5 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "thread_ts": "${{ needs.notify-start.outputs.message_ts }}",
-              "text": "<!channel> <!here>The workflow has completed. Please review the results above."
+              "text": "<!here> The workflow has completed.\nPlease review the results above."
             }
