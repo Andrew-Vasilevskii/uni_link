@@ -131,7 +131,7 @@ jobs:
               "text": ":eyes: Build Started",
               "attachments": [
                 {
-                  "color": ${{ env.ATTACHMENT_COLOR }},
+                  "color": "${{ env.ATTACHMENT_COLOR }}",
                   "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
                 }
               ]
@@ -206,7 +206,7 @@ jobs:
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "attachments" : [
                 {
-                  "color": ${{ env.ATTACHMENT_COLOR }}
+                  "color": "${{ env.ATTACHMENT_COLOR }}",
                   "blocks": [
                     ${{ needs.notify-start.outputs.deployment_summary_message_block }},
                     {"type": "divider"},
