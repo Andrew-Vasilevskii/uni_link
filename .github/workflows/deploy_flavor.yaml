@@ -109,9 +109,9 @@ jobs:
                     "type": "actions",
                     "elements": [{
                         "type": "button",
+                        "style": "danger",
                         "text": {"type": "plain_text","text": "View Workflow Run"},
-                        "url": "$actions_url",
-                        "style": "danger"
+                        "url": "$actions_url"
                     }]
                   }'
           
@@ -217,8 +217,7 @@ jobs:
                         "type": "mrkdwn",
                         "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
                       }
-                    },
-                    ${{ needs.notify-start.outputs.failed_actions_button }}
+                    }
                   ]
                 }
               ]
