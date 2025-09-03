@@ -172,14 +172,14 @@ jobs:
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "*Load legal documents:*\n Status: "${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
+                      "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
                     }
                   },
                   {
                     "type": "section",
                     "text": {
                       "type": "mrkdwn",
-                      "text": "*Load partners:*\n Status: "${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
+                      "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
                     }
                   },
                   {
