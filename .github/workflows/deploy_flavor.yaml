@@ -304,12 +304,12 @@ jobs:
           elif (( success_count == 0 && failure_count > 0 )); then
             # ALL FAILED
             color="$FAILED_ATTACHMENT_COLOR"
-            summary_text="*Build Failed*\nAll platform builds completed with failures :this_is_fine:"
+            summary_text="*Build Failed* :this_is_fine:\nAll platform builds completed with failures"
             accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           else
             # MIXED RESULTS (at least one failure)
             color="$MIXED_ATTACHMENT_COLOR"
-            summary_text="*Build Unstable*\n One or more platform builds completed with failures :this-is-fine-fire:"
+            summary_text="*Build Unstable* :this-is-fine-fire:\n One or more platform builds completed with failures"
             accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           fi
           
@@ -366,7 +366,7 @@ jobs:
   final-ping:
     name: Send Final Ping
     runs-on: ubuntu-latest
-    if: always() && (needs.notify-result.result != 'skipped' || needs.notify-pre-build-failure.result != 'skipped')
+    if: always() && (needs.notify-build-result.result != 'skipped' || needs.notify-pre-build-failure.result != 'skipped')
     needs: [ notify-start, notify-pre-build-failure, build-with-deploy, notify-build-result]
     steps:
       - name: Send threaded reply with channel mention
