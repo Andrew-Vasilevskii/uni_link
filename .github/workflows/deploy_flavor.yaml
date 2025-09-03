@@ -116,6 +116,7 @@ jobs:
         run: |
           echo 'load-legal-documents'
           sleep 3
+          exit 1
 
   load-partners:
     name: Load partners
@@ -248,7 +249,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ needs.build_step.result == 'success' && '✅' || '❌' }} *Build Finished: `${{ inputs.flavor }}`*\n*Result*: `${{ needs.build_step.result }}`\n*Version*: `${{ needs.calculate-version.outputs.version }}` (`${{ needs.calculate-version.outputs.build_number }}`)"
+                    "text": "${{ needs.build-with-deploy.result == 'success' && '✅' || '❌' }} *Build Finished: `${{ inputs.flavor }}`*\n*Result*: `${{ needs.build_step.result }}`\n*Version*: `${{ needs.calculate-version.outputs.version }}` (`${{ needs.calculate-version.outputs.build_number }}`)"
                   }
                 },
                 {
