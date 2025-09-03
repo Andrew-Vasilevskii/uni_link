@@ -113,7 +113,7 @@ jobs:
                         "url": "$actions_url",
                         "style": "danger"
                     }]
-                  }
+                  }'
           
           echo "failed_actions_button<<END" >> "$GITHUB_OUTPUT"
           echo "$button" >> "$GITHUB_OUTPUT"
