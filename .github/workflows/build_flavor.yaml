@@ -78,6 +78,7 @@ jobs:
         shell: bash
         run: |
           echo 'Build huawei'
+          exit 1
 
   ios:
     name: Build iOS
