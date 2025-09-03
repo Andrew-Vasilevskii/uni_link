@@ -261,9 +261,9 @@ jobs:
           IOS_ENABLED: ${{ inputs.ios }}
           ANDROID_ENABLED: ${{ inputs.android }}
           HUAWEI_ENABLED: ${{ inputs.huawei }}
-          IOS_RESULT: ${{ needs.build_step.outputs.ios_result }}
-          ANDROID_RESULT: ${{ needs.build_step.outputs.android_result }}
-          HUAWEI_RESULT: ${{ needs.build_step.outputs.huawei_result }}
+          IOS_RESULT: ${{ needs.build-with-deploy.outputs.ios_result }}
+          ANDROID_RESULT: ${{ needs.build-with-deploy.outputs.android_result }}
+          HUAWEI_RESULT: ${{ needs.build-with-deploy.outputs.huawei_result }}
           FAILED_BUTTON: ${{ needs.notify-start.outputs.failed_actions_button }}
           DEPLOYMENT_INFO_BLOCK: ${{ needs.notify-start.outputs.deployment_summary_message_block }}
         run: |
