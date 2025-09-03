@@ -45,7 +45,6 @@ jobs:
         shell: bash
         run: |
           echo 'validate-inputs'
-          sleep 3
 
   calculate-version:
     name: Calculate version
@@ -146,8 +145,6 @@ jobs:
         shell: bash
         run: |
           echo 'load-legal-documents'
-          sleep 3
-          exit 1
 
   load-partners:
     name: Load partners
@@ -158,8 +155,6 @@ jobs:
         shell: bash
         run: |
           echo ' load-partners'
-          sleep 3
-          exit 1
 
 
   set-version:
@@ -172,7 +167,6 @@ jobs:
         shell: bash
         run: |
           echo 'set-version'
-          sleep 1
 
   notify-pre-build-failure:
     name: Notify Pre-Build Failure
@@ -308,24 +302,24 @@ jobs:
             # ALL SUCCESS
             color="$SUCCESS_ATTACHMENT_COLOR"
             summary_text="*All builds completed successfully*"
-            accessory_json=""
+            accessory_json_data=""
           elif (( success_count == 0 && failure_count > 0 )); then
             # ALL FAILED
             color="$FAILED_ATTACHMENT_COLOR"
             summary_text="*All builds failed*"
-            accessory_json=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
           else
             # MIXED RESULTS (at least one failure)
             color="$MIXED_ATTACHMENT_COLOR"
             summary_text="*Builds completed with some failures*"
-            accessory_json=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
           fi
           
           {
             echo "attachment_color=$color"
             echo "summary_text=$summary_text"
             echo "accessory_json<<END"
-            echo "$accessory_json"
+            echo "$accessory_json_data"
             echo "END"
             echo "platform_statuses=$platform_statuses"
           } >> $GITHUB_OUTPUT 
