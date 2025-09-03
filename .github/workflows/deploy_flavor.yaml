@@ -189,7 +189,6 @@ jobs:
     secrets: inherit
     with:
       flavor: ${{ inputs.flavor }}
-      deploy: false
       android: ${{ inputs.android }}
       ios: ${{ inputs.ios }}
       huawei: ${{ inputs.huawei }}
