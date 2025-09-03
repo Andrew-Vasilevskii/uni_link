@@ -263,6 +263,7 @@ jobs:
           ANDROID_RESULT: ${{ needs.build-with-deploy.outputs.android_result }}
           HUAWEI_RESULT: ${{ needs.build-with-deploy.outputs.huawei_result }}
         run: |
+          set -x 
           success_count=0
           failure_count=0
           
@@ -274,12 +275,12 @@ jobs:
             local result=$3
           
             if [[ "$enabled" == "true" ]]; then
-                local icon
+                local status="Skipped"
               if [[ "$result" == "success" ]]; then
-                icon="$SUCCESS_EMOJI"
+                status="$SUCCESS_EMOJI"
                 ((success_count++))
               elif [[ "$result" == "failure" ]]; then
-                icon="$FAILED_EMOJI"
+                status="$FAILED_EMOJI"
                 ((failure_count++))
               fi
               
@@ -288,7 +289,7 @@ jobs:
               fi
               
               platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
-              platform_statuses+='{"type": "plain_text","text": "'"$icon"'"}'
+              platform_statuses+='{"type": "plain_text","text": "'"$status"'"}'
             fi
           }
           
@@ -296,7 +297,31 @@ jobs:
           process_platform "Android" "$ANDROID_ENABLED" "$ANDROID_RESULT"
           process_platform "Huawei" "$HUAWEI_ENABLED" "$HUAWEI_RESULT"
           
+          if (( failure_count == 0 && success_count > 0 )); then
+            # ALL SUCCESS
+            color="$SUCCESS_ATTACHMENT_COLOR"
+            summary_text="*All builds completed successfully*"
+            accessory_json_data=""
+          elif (( success_count == 0 && failure_count > 0 )); then
+            # ALL FAILED
+            color="$FAILED_ATTACHMENT_COLOR"
+            summary_text="*All builds failed*"
+            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+          else
+            # MIXED RESULTS (at least one failure)
+            color="$MIXED_ATTACHMENT_COLOR"
+            summary_text="*Builds completed with some failures*"
+            accessory_json_data=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
+          fi
           
+          {
+            echo "attachment_color=$color"
+            echo "summary_text=$summary_text"
+            echo "accessory_json<<END"
+            echo "$accessory_json_data"
+            echo "END"
+            echo "platform_statuses=$platform_statuses"
+          } >> $GITHUB_OUTPUT 
 
       - name: Update Slack Message with Build Summary
         uses: slackapi/slack-github-action@v2.1.1
