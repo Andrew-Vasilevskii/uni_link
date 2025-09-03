@@ -253,19 +253,18 @@ jobs:
       - name: Summarize build results
         id: summary
         env:
-          SUCCESS_ATTACHMENT_COLOR: '#228B22' # Green
-          FAILED_ATTACHMENT_COLOR: '#E50051' # Red
-          MIXED_ATTACHMENT_COLOR: '#F2C214' # Orange
-          SUCCESS_EMOJI: '✅'
-          FAILED_EMOJI: '❌'
+          SUCCESS_ATTACHMENT_COLOR: "#228B22" # Green
+          FAILED_ATTACHMENT_COLOR: "#E50051" # Red
+          MIXED_ATTACHMENT_COLOR: "#F2C214" # Orange
+          SUCCESS_EMOJI: "✅"
+          FAILED_EMOJI: "❌"
+          FAILED_ACTIONS_BUTTON: ${{ needs.notify-start.outputs.failed_actions_button }}
           IOS_ENABLED: ${{ inputs.ios }}
           ANDROID_ENABLED: ${{ inputs.android }}
           HUAWEI_ENABLED: ${{ inputs.huawei }}
           IOS_RESULT: ${{ needs.build-with-deploy.outputs.ios_result }}
           ANDROID_RESULT: ${{ needs.build-with-deploy.outputs.android_result }}
           HUAWEI_RESULT: ${{ needs.build-with-deploy.outputs.huawei_result }}
-          FAILED_BUTTON: ${{ needs.notify-start.outputs.failed_actions_button }}
-          DEPLOYMENT_INFO_BLOCK: ${{ needs.notify-start.outputs.deployment_summary_message_block }}
         run: |
           success_count=0
           failure_count=0
@@ -311,12 +310,12 @@ jobs:
             # ALL FAILED
             color="$FAILED_ATTACHMENT_COLOR"
             summary_text="*All builds failed*"
-            accessory_json=',"accessory": "'"${FAILED_BUTTON}"'"'
+            accessory_json=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
           else
             # MIXED RESULTS (at least one failure)
             color="$MIXED_ATTACHMENT_COLOR"
             summary_text="*Builds completed with some failures*"
-            accessory_json=',"accessory": "'"${FAILED_BUTTON}"'"'
+            accessory_json=',"accessory": "'"${FAILED_ACTIONS_BUTTON}"'"'
           fi
           
           {
@@ -383,5 +382,5 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "thread_ts": "${{ needs.notify-start.outputs.message_ts }}",
-              "text": "<!channel> The workflow has completed. Please review the results above."
+              "text": "<!channel> <!here>The workflow has completed. Please review the results above."
             }
