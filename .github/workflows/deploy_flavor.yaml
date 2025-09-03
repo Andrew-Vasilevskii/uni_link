@@ -147,6 +147,7 @@ jobs:
         run: |
           echo 'load-legal-documents'
           sleep 3
+          exit 1
 
   load-partners:
     name: Load partners
