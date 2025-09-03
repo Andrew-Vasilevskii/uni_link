@@ -119,7 +119,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v2.1.1
         env:
-          ATTACHMENT_COLOR: "#f2c214"
+          ATTACHMENT_COLOR: "#439FE0"
         with:
           errors: true
           method: chat.postMessage
@@ -250,9 +250,9 @@ jobs:
       - name: Summarize build results
         id: summary
         env:
-          SUCCESS_ATTACHMENT_COLOR: "#228B22" # Green
+          SUCCESS_ATTACHMENT_COLOR: "#2BBC9B" # Green
           FAILED_ATTACHMENT_COLOR: "#E50051" # Red
-          MIXED_ATTACHMENT_COLOR: "#F2C214" # Orange
+          MIXED_ATTACHMENT_COLOR: "#FFA500" # Orange
           SUCCESS_EMOJI: "✅"
           FAILED_EMOJI: "❌"
           FAILED_ACTIONS_BUTTON: ${{ needs.notify-start.outputs.failed_actions_button }}
@@ -300,17 +300,17 @@ jobs:
           if (( failure_count == 0 && success_count > 0 )); then
             # ALL SUCCESS
             color="$SUCCESS_ATTACHMENT_COLOR"
-            summary_text="*All builds completed successfully*"
+            summary_text="*Build Successful* :party-github:\nAll platforms were built successfully"
             accessory_json_data=""
           elif (( success_count == 0 && failure_count > 0 )); then
             # ALL FAILED
             color="$FAILED_ATTACHMENT_COLOR"
-            summary_text="*All builds failed*"
+            summary_text="*Build Failed*\nAll platform builds completed with failures :this_is_fine:"
             accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           else
             # MIXED RESULTS (at least one failure)
             color="$MIXED_ATTACHMENT_COLOR"
-            summary_text="*Builds completed with some failures*"
+            summary_text="*Build Unstable*\n One or more platform builds completed with failures :this-is-fine-fire:"
             accessory_json_data=',"accessory": '"${FAILED_ACTIONS_BUTTON}"''
           fi
           
