@@ -283,10 +283,9 @@ jobs:
                 let failure_count++
               fi
               
-              if [[ -n "$platform_statuses" ]]; then
-                platform_statuses+=","
-              fi
-
+              
+              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
+              platform_statuses+='{"type": "plain_text","text": "'"$status"'"}'
             fi
           }
           
