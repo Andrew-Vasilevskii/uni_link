@@ -275,20 +275,21 @@ jobs:
             local result=$3
           
             if [[ "$enabled" == "true" ]]; then
-                local status="Skipped"
+              local status="Skipped"
               if [[ "$result" == "success" ]]; then
                 status="$SUCCESS_EMOJI"
-                ((success_count++))
+                let success_count++
               elif [[ "$result" == "failure" ]]; then
                 status="$FAILED_EMOJI"
-                ((failure_count++))
+                let failure_count++
               fi
               
               if [[ -n "$platform_statuses" ]]; then
                 platform_statuses+=","
               fi
               
-
+              platform_statuses+='{"type": "mrkdwn","text": "*'"$name"'*"},'
+              platform_statuses+='{"type": "plain_text","text": "'"$status"'"}'
             fi
           }
           
