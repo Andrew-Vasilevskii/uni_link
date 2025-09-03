@@ -177,8 +177,26 @@ jobs:
     needs: [notify-start, load-legal-documents, load-partners, set-version, calculate-version]
     if: failure()
     steps:
+      - name: Build pre-build statuses
+        id: statuses
+        env:
+          SUCCESS_EMOJI: '✅'
+          FAILED_EMOJI: '❌'
+        run: |
+          legal_status=${{ needs.load-legal-documents.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
+          partners_status=${{ needs.load-partners.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
+          version_status=${{ needs.set-version.result == 'success' && $SUCCESS_EMOJI || $FAILED_EMOJI }}
+          
+          {
+            echo "legal=$legal_status"
+            echo "partners=$partners_status"
+            echo "version=$version_status"
+          } >> $GITHUB_OUTPUT
+
       - name: Update Slack Message with Failure
         uses: slackapi/slack-github-action@v2.1.1
+        env:
+          ATTACHMENT_COLOR: "#E50051"
         with:
           errors: true
           method: chat.update
@@ -187,10 +205,9 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
-              "text": "Pre-build step failed for ${{ inputs.flavor }}",
               "attachments" : [
                 {
-                  "color": "#E50051",
+                  "color": "$ATTACHMENT_COLOR",
                   "blocks": [
                     ${{ needs.notify-start.outputs.deployment_summary_message_block }},
                     {"type": "divider"},
@@ -198,29 +215,19 @@ jobs:
                       "type": "section",
                       "text": {
                         "type": "mrkdwn",
-                        "text": "*Pre-build Failed*\nOne of the initial setup steps failed. The build was not started."
+                        "text": "One of the initial setup steps failed.\nThe build was not started."
                       },
                       "accessory": ${{ needs.notify-start.outputs.failed_actions_button }}
                     },
                     {
                       "type": "section",
                       "fields": [
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Load legal documents:*"
-                        },
-                        {
-                          "type": "plain_text",
-                          "text": "${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}"
-                        },
-                        {
-                          "type": "mrkdwn",
-                          "text": "*Load partners:*"
-                        },
-                        {
-                          "type": "plain_text",
-                          "text": "${{ needs.load-partners.result == 'success' && '✅' || '❌' }}"
-                        }
+                        {"type": "mrkdwn","text": "*Load legal documents:*"},
+                        {"type": "plain_text","text": "${{ steps.statuses.outputs.legal }}"},
+                        {"type": "mrkdwn","text": "*Load partners:*"},
+                        {"type": "plain_text","text": ${{ steps.statuses.outputs.partners }}"},
+                        {"type": "mrkdwn","text": "*Set version:*"},
+                        {"type": "plain_text", "text": "${{ steps.statuses.outputs.version }}"}
                       ]
                     }
                   ]
