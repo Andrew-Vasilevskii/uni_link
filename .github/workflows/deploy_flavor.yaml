@@ -156,6 +156,7 @@ jobs:
         shell: bash
         run: |
           echo ' load-partners'
+          exit 1
 
 
   set-version:
