@@ -119,7 +119,8 @@ jobs:
       - name: Send initial Slack message
         id: slack
         uses: slackapi/slack-github-action@v2.1.1
-
+        env:
+          ATTACHMENT_COLOR: "#f2c214"
         with:
           errors: true
           method: chat.postMessage
@@ -130,7 +131,7 @@ jobs:
               "text": ":eyes: Build Started",
               "attachments": [
                 {
-                  "color": "#f2c214",
+                  "color": env.ATTACHMENT_COLOR,
                   "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
                 }
               ]
@@ -205,7 +206,7 @@ jobs:
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "attachments" : [
                 {
-                  "color": "env.ATTACHMENT_COLOR",
+                  "color": env.ATTACHMENT_COLOR,
                   "blocks": [
                     ${{ needs.notify-start.outputs.deployment_summary_message_block }},
                     {"type": "divider"},
