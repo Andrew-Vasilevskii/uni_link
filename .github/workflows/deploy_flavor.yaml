@@ -362,7 +362,7 @@ jobs:
     name: 📢 Send Final Ping
     runs-on: ubuntu-latest
     if: always() && (needs.notify-result.result != 'skipped' || needs.notify-pre-build-failure.result != 'skipped')
-    needs: [ notify-start, notify-result, notify-pre-build-failure, build-with-deploy ]
+    needs: [ notify-start, notify-pre-build-failure, build-with-deploy, notify-build-result]
     steps:
       - name: Send threaded reply with channel mention
         uses: slackapi/slack-github-action@v2.1.1
