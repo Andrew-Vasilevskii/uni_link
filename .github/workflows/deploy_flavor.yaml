@@ -111,12 +111,12 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "text": ":eyes: *Build Started* for `${{ inputs.flavor }}`",
-              {
-                "attachments": [
+              "attachments": [
+                {
                   "color": "#f2c214",
                   "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
-                ]
-              }
+                }
+              ]
             }
 
   load-legal-documents:
