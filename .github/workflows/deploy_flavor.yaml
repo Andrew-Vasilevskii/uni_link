@@ -280,7 +280,6 @@ jobs:
                 success_count=$((success_count + 1))
               elif [[ "$result" == "failure" ]]; then
                 status="$FAILED_EMOJI"
-                let failure_count++
                 failure_count=$((failure_count + 1))
               fi
           
