@@ -72,6 +72,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: calculate-version
     outputs:
+      deployment_summary_message_block: ${{ steps.deployment_info.outputs.deployment_summary_message_block }}
       message_ts: ${{ steps.slack.outputs.ts }}
     steps:
       - name: Build enabled platforms list
@@ -110,10 +111,12 @@ jobs:
             {
               "channel": "${{ inputs.channel_id }}",
               "text": ":eyes: *Build Started* for `${{ inputs.flavor }}`",
-              "attachments": [
-                "color": "#f2c214",
-                "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
-              ]
+              {
+                "attachments": [
+                  "color": "#f2c214",
+                  "blocks": [${{ steps.deployment_info.outputs.deployment_summary_message_block }}]
+                ]
+              }
             }
 
   load-legal-documents:
@@ -169,42 +172,45 @@ jobs:
               "ts": "${{ needs.notify-start.outputs.message_ts }}",
               "text": "Pre-build step failed for ${{ inputs.flavor }}",
               "attachments" : [
-                "color": "#E50051",
-                "blocks": [
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "*Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
-                    }
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
-                    }
-                  },
-                  {
-                    "type": "section",
-                    "text": {
-                      "type": "mrkdwn",
-                      "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
-                    }
-                  },
-                  {
-                    "type": "actions",
-                    "elements": [
-                      {
-                        "type": "button",
-                        "text": {
-                          "type": "plain_text",
-                          "text": "View Workflow Run"
-                        },
-                        "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                        "style": "danger"
+                {
+                  "color": "#E50051",
+                  "blocks": [
+                    ${{ needs.notify-start.outputs.deployment_summary_message_block }},
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*Pre-build Failed: `${{ inputs.flavor }}`*\nOne of the initial setup steps failed. The build was not started."
                       }
-                    ]
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*Load legal documents:*\n Status: ${{ needs.load-legal-documents.result == 'success' && '✅' || '❌' }}."
+                      }
+                    },
+                    {
+                      "type": "section",
+                      "text": {
+                        "type": "mrkdwn",
+                        "text": "*Load partners:*\n Status: ${{ needs.load-partners.result == 'success' && '✅' || '❌' }}."
+                      }
+                    },
+                    {
+                      "type": "actions",
+                      "elements": [
+                        {
+                          "type": "button",
+                          "text": {
+                            "type": "plain_text",
+                            "text": "View Workflow Run"
+                          },
+                          "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                          "style": "danger"
+                        }
+                      ]
+                    }
                   }
                 ]
               ]
