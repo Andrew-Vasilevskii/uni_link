@@ -189,7 +189,7 @@ jobs:
     secrets: inherit
     with:
       flavor: ${{ inputs.flavor }}
-      dev_override_flavor: ${{ inputs.dev_override_flavor }}
+      dev_override_flavor: DEV
       deploy: false
       android: ${{ inputs.android }}
       ios: ${{ inputs.ios }}
