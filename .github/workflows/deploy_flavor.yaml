@@ -94,7 +94,7 @@ jobs:
           BUILD_NUMBER: ${{ needs.calculate-version.outputs.build_number }}
           PLATFORMS: ${{ steps.build_platforms.outputs.list }}
         run: |
-          message="*Flavor*: \`$FLAVOR\`\n*Version*: \`$VERSION($BUILD_NUMBER)\`\n*Platforms*: \`$PLATFORMS\`"
+          message="*Flavor*: \`$FLAVOR\`\n*Version*: \`$VERSION ($BUILD_NUMBER)\`\n*Platforms*: \`$PLATFORMS\`"
           body='{"type": "section", "text": {"type": "mrkdwn","text": "'"$message"'"}}'
           
           echo "deployment_summary_message_block=$body" >> $GITHUB_OUTPUT
@@ -211,8 +211,8 @@ jobs:
                         }
                       ]
                     }
-                  }
-                ]
+                  ]
+                }
               ]
             }
 
