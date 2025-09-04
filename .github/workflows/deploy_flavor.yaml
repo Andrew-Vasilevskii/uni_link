@@ -119,7 +119,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v2.1.1
         env:
-          ATTACHMENT_COLOR: "#439FE0"
+          ATTACHMENT_COLOR: "#439FE0" # Blue
         with:
           errors: true
           method: chat.postMessage
@@ -145,7 +145,6 @@ jobs:
         shell: bash
         run: |
           echo 'load-legal-documents'
-          exit 1
 
   load-partners:
     name: Load partners
@@ -156,8 +155,6 @@ jobs:
         shell: bash
         run: |
           echo ' load-partners'
-          exit 1
-
 
   set-version:
     name: Bump version
