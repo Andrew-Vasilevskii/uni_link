@@ -11,7 +11,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: ${{ inputs.success == 'true' }}
+    if: ${{ inputs.success }}
     steps:
       - shell: bash
         run: |
