@@ -9,20 +9,27 @@ on:
         default: true
 
 jobs:
-  test:
+  test1:
     runs-on: ubuntu-latest
-    if: ${{ inputs.success }}
     steps:
       - shell: bash
         run: |
           echo "first job"
           sleep 20
 
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.success }}
+    steps:
+      - shell: bash
+        run: |
+          echo "on success job"
+
   test2:
-    needs: [ test ]
+    needs: [ test, test1]
     runs-on: ubuntu-latest
     if: cancelled() && needs.test.result == 'success'
     steps:
       - shell: bash
         run: |
-          echo "SECOND job"
+          echo "THIRD job"
