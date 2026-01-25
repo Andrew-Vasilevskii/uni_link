@@ -38,7 +38,7 @@ runs:
         attachments=',"attachments": [$attachments_data]'
 
         echo "attachments_json<<END" >> "$GITHUB_OUTPUT"
-        echo "attachments" >> "$GITHUB_OUTPUT"
+        echo "$attachments" >> "$GITHUB_OUTPUT"
         echo "END" >> "$GITHUB_OUTPUT"
 
     - name: Send threaded reply with channel mention
