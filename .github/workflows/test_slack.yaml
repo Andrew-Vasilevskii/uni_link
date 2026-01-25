@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - uses: ./.github/actions/slack_actions/notify_build_finish/
+      - uses: ./.github/actions/notify_build_finish/
         with:
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ secrets.SLACK_BUILDS_CHANNEL_ID }}
