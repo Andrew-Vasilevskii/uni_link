@@ -38,22 +38,88 @@ runs:
             "text": "<!here> The workflow has completed.\nPlease review the results above."
           }
 
-    - name: Upload changelog file to Slack
+    # Upload changelog as file (not rendered as markdown in Slack)
+    # - name: Upload changelog file to Slack
+    #   if: ${{ inputs.changelog_md != '' }}
+    #   uses: slackapi/slack-github-action@v2.1.1
+    #   env:
+    #     SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+    #     SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
+    #     THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
+    #   with:
+    #     errors: true
+    #     method: files.uploadV2
+    #     token: ${{ env.SLACK_BOT_TOKEN }}
+    #     payload: |
+    #       {
+    #         "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
+    #         "thread_ts": "${{ env.THREAD_TS }}",
+    #         "file": "changelog.md",
+    #         "filename": "changelog.md",
+    #         "title": "Changelog"
+    #       }
+
+    - name: Post changelog as threaded messages
       if: ${{ inputs.changelog_md != '' }}
-      uses: slackapi/slack-github-action@v2.1.1
+      shell: bash
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
         THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
-      with:
-        errors: true
-        method: files.uploadV2
-        token: ${{ env.SLACK_BOT_TOKEN }}
-        payload: |
-          {
-            "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
-            "thread_ts": "${{ env.THREAD_TS }}",
-            "file": "changelog.md",
-            "filename": "changelog.md",
-            "title": "Changelog"
-          }
+      run: |
+        # Read changelog from file
+        changelog_content=$(cat changelog.md)
+        
+        MAX_LENGTH=3000
+        
+        # Function to send a message chunk
+        send_chunk() {
+          local chunk="$1"
+          local chunk_json=$(jq -Rs . <<< "$chunk")
+          
+          curl -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d '{
+              "channel": "'"$SLACK_CHANNEL_ID"'",
+              "thread_ts": "'"$THREAD_TS"'",
+              "text": '"$chunk_json"',
+              "mrkdwn": true
+            }'
+          
+          sleep 1
+        }
+        
+        # Split and send changelog
+        if [[ ${#changelog_content} -le $MAX_LENGTH ]]; then
+          # Send as single message
+          send_chunk "$changelog_content"
+        else
+          # Split into chunks at newlines
+          remaining="$changelog_content"
+          
+          while [[ -n "$remaining" ]]; do
+            # Take up to MAX_LENGTH characters
+            chunk="${remaining:0:$MAX_LENGTH}"
+            
+            # If there's more content, try to break at a newline
+            if [[ ${#remaining} -gt $MAX_LENGTH ]]; then
+              # Find the last newline in the chunk
+              last_newline_pos=$(echo "$chunk" | grep -ob $'\n' | tail -1 | cut -d: -f1)
+              
+              if [[ -n "$last_newline_pos" && "$last_newline_pos" -gt 0 ]]; then
+                # Break at the last newline
+                chunk="${remaining:0:$last_newline_pos}"
+              fi
+            fi
+            
+            send_chunk "$chunk"
+            
+            # Remove sent chunk from remaining
+            chunk_length=${#chunk}
+            remaining="${remaining:$chunk_length}"
+            
+            # Skip leading newline if present
+            remaining="${remaining#$'\n'}"
+          done
+        fi
