@@ -75,6 +75,12 @@ runs:
         # Read changelog from file
         changelog_content=$(cat changelog.md)
         
+        # Convert Markdown headers to Slack format (bold text)
+        # ## Header -> *Header*
+        changelog_content=$(echo "$changelog_content" | sed 's/^## \(.*\)$/*\1*/g')
+        # ### Header -> *Header*
+        changelog_content=$(echo "$changelog_content" | sed 's/^### \(.*\)$/*\1*/g')
+        
         MAX_LENGTH=3000
         
         # Function to send a message chunk
@@ -89,15 +95,9 @@ runs:
               "channel": "'"$SLACK_CHANNEL_ID"'",
               "thread_ts": "'"$THREAD_TS"'",
               "text": '"$chunk_json"',
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": '"$chunk_json"'
-                  }
-                }
-              ]
+              "mrkdwn": true,
+              "unfurl_links": false,
+              "unfurl_media": false
             }'
           
           sleep 1
