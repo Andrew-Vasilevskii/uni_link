@@ -23,11 +23,11 @@ runs:
         CHANGELOG_MD: ${{ inputs.changelog_md }}
       run: |
         if [[ -z "${CHANGELOG_MD}" ]]; then
-          echo "attachments=" >> "$GITHUB_OUTPUT"
+          echo "attachments_json=" >> "$GITHUB_OUTPUT"
           exit 0
         fi
 
-        changelog_md_json='{"type": "section", "text": {"type": "mrkdwn", "text": $CHANGELOG_MD}}'
+        changelog_md_json='{"type": "section", "text": {"type": "mrkdwn", "text": "'"$CHANGELOG_MD"'"}}'
         attachments_data='{
                             "color": "'"$ATTACHMENT_COLOR"'",
                             "blocks": [
@@ -35,7 +35,7 @@ runs:
                             ]
                           }'
 
-        attachments=',"attachments": [$attachments_data]'
+        attachments=',"attachments": ['"$attachments_data"']'
 
         echo "attachments_json<<END" >> "$GITHUB_OUTPUT"
         echo "$attachments" >> "$GITHUB_OUTPUT"
@@ -56,6 +56,6 @@ runs:
         payload: |
           {
             "channel": "${{ env.SLACK_CHANNEL_ID }}",
-            "text": "<!here> The workflow has completed.\nPlease review the results above."
-            ${{ env.ATTACHMENT_JSON }}
+            "text": "<!here> The workflow has completed.\nPlease review the results above.
+            "${{ env.ATTACHMENT_JSON }}
           }
