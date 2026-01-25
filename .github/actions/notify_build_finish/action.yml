@@ -15,30 +15,27 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Build attachment payload
-      id: build_attachment_payload
+    - name: Build message payload
+      id: build_message_payload
       shell: bash
       env:
-        ATTACHMENT_COLOR: "#439FE0" # Blue
         CHANGELOG_MD: ${{ inputs.changelog_md }}
       run: |
         if [[ -z "${CHANGELOG_MD}" ]]; then
-          echo "attachments_json=" >> "$GITHUB_OUTPUT"
+          echo "changelog_block=" >> "$GITHUB_OUTPUT"
           exit 0
         fi
 
-        changelog_md_json='{"type": "section", "text": {"type": "mrkdwn", "text": "'"$CHANGELOG_MD"'"}}'
-        attachments_data='{
-                            "color": "'"$ATTACHMENT_COLOR"'",
-                            "blocks": [
-                              '"$changelog_md_json"'
-                            ]
-                          }'
-
-        attachments=',"attachments": ['"$attachments_data"']'
-
-        echo "attachments_json<<END" >> "$GITHUB_OUTPUT"
-        echo "$attachments" >> "$GITHUB_OUTPUT"
+        changelog_block=',{
+          "type": "section",
+          "text": {
+            "type": "mrkdwn",
+            "text": "'"$CHANGELOG_MD"'"
+          }
+        }'
+        
+        echo "changelog_block<<END" >> "$GITHUB_OUTPUT"
+        echo "$changelog_block" >> "$GITHUB_OUTPUT"
         echo "END" >> "$GITHUB_OUTPUT"
 
     - name: Send threaded reply with channel mention
@@ -47,8 +44,7 @@ runs:
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
-        THREAD_TS: ${{ inputs.message_ts }}
-        ATTACHMENT_JSON: ${{ steps.build_attachment_payload.outputs.attachments_json }}
+        CHANGELOG_BLOCK: ${{ steps.build_message_payload.outputs.changelog_block }}
       with:
         errors: true
         method: chat.postMessage
@@ -56,6 +52,14 @@ runs:
         payload: |
           {
             "channel": "${{ env.SLACK_CHANNEL_ID }}",
-            "text": "<!here> The workflow has completed.\nPlease review the results above.
-            "${{ env.ATTACHMENT_JSON }}
+            "text": "<!here> The workflow has completed.\nPlease review the results above.",
+            "blocks": [
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<!here> The workflow has completed.\nPlease review the results above."
+                }
+              }${{ env.CHANGELOG_BLOCK }}
+            ]
           }
