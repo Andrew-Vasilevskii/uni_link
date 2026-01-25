@@ -1,63 +1,45 @@
 
 on:
   workflow_dispatch:
-    inputs:
-      channel_id:
-        description: ''
-        type: string
-        required: true
 
 jobs:
-  testing:
+  collect-changelog:
+    name: Collect changelog
     runs-on: ubuntu-latest
+    outputs:
+      changelog_md: ${{ steps.generate.outputs.markdown }}
     steps:
-      - name: Initiate the deployment launch sequence
-        id: launch_sequence
-        uses: slackapi/slack-github-action@v2.1.1
+      - uses: actions/checkout@v5
         with:
-          errors: true
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: ${{ inputs.channel_id }}
-            text: "Deployment started :eyes:"
-            attachments:
-              - color: "dbab09"
-                fields:
-                  - title: "Status"
-                    short: true
-                    value: "In Progress"
+          fetch-depth: 0
 
-      - name: Countdown until launch
-        run: sleep 10
+      - name: Generate changelog
+        id: generate
+        run: |
+          scripts/changelog/generate_changelog.sh \
+            --flavor "BETA" \
+            --version "1.0.0" \
+            --build "1" \
+            --output changelog.md
+          echo "markdown<<EOF" >> "$GITHUB_OUTPUT"
+          cat changelog.md >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Update the original message with success
-        uses: slackapi/slack-github-action@v2.1.1
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v4
         with:
-          errors: true
-          method: chat.update
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            channel: ${{ inputs.channel_id }}
-            ts: "${{ steps.launch_sequence.outputs.ts }}"
-            text: "Deployment finished! :rocket:"
-            attachments:
-              - color: "28a745"
-                fields:
-                  - title: "Status"
-                    short: true
-                    value: "Completed"
+          name: changelog
+          path: changelog.md
+  
+  notify-build-finish:
+    name: Send Final Ping
+    runs-on: ubuntu-latest
+    needs: [ collect-changelog ]
+    steps:
+      - uses: actions/checkout@v5
 
-      - name: Add more context
-        uses: slackapi/slack-github-action@v2.1.1
+      - uses: ./.github/actions/slack_actions/notify_build_finish/
         with:
-          errors: true
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            {
-              "link_names": true,
-              "channel": "${{ inputs.channel_id }}",
-              "thread_ts": "${{ steps.launch_sequence.outputs.ts }}",
-              "text": "<!channel> WE ARE DONE!!"
-            }
+          slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ secrets.SLACK_BUILDS_CHANNEL_ID }}
+          changelog_md: ${{ needs.collect-changelog.outputs.changelog_md }}
