@@ -15,36 +15,19 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Build message payload
-      id: build_message_payload
-      shell: bash
-      env:
-        CHANGELOG_MD: ${{ inputs.changelog_md }}
-      run: |
-        if [[ -z "${CHANGELOG_MD}" ]]; then
-          echo "changelog_block=" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
-
-        changelog_block=',{
-          "type": "section",
-          "text": {
-            "type": "mrkdwn",
-            "text": "'"$CHANGELOG_MD"'"
-          }
-        }'
-        
-        echo "changelog_block<<END" >> "$GITHUB_OUTPUT"
-        echo "$changelog_block" >> "$GITHUB_OUTPUT"
-        echo "END" >> "$GITHUB_OUTPUT"
-
-    - name: Send threaded reply with channel mention
-      id: slack
+    - name: Download changelog artifact
+      if: ${{ inputs.changelog_md != '' }}
+      uses: actions/download-artifact@v4
+      with:
+        name: changelog
+        path: .
+    
+    - name: Send completion message with channel mention
+      id: slack_main
       uses: slackapi/slack-github-action@v2.1.1
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
-        CHANGELOG_BLOCK: ${{ steps.build_message_payload.outputs.changelog_block }}
       with:
         errors: true
         method: chat.postMessage
@@ -52,14 +35,25 @@ runs:
         payload: |
           {
             "channel": "${{ env.SLACK_CHANNEL_ID }}",
-            "text": "<!here> The workflow has completed.\nPlease review the results above.",
-            "blocks": [
-              {
-                "type": "section",
-                "text": {
-                  "type": "mrkdwn",
-                  "text": "<!here> The workflow has completed.\nPlease review the results above."
-                }
-              }${{ env.CHANGELOG_BLOCK }}
-            ]
+            "text": "<!here> The workflow has completed.\nPlease review the results above."
+          }
+
+    - name: Upload changelog file to Slack
+      if: ${{ inputs.changelog_md != '' }}
+      uses: slackapi/slack-github-action@v2.1.1
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+        SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
+        THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
+      with:
+        errors: true
+        method: files.uploadV2
+        token: ${{ env.SLACK_BOT_TOKEN }}
+        payload: |
+          {
+            "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
+            "thread_ts": "${{ env.THREAD_TS }}",
+            "file": "changelog.md",
+            "filename": "changelog.md",
+            "title": "Changelog"
           }
