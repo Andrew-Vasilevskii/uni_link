@@ -16,8 +16,8 @@ runs:
   using: "composite"
   steps:
     - name: Download changelog artifact
-      if: ${{ inputs.changelog_md != '' }}
       uses: actions/download-artifact@v4
+      continue-on-error: true
       with:
         name: changelog
         path: .
@@ -60,13 +60,18 @@ runs:
     #       }
 
     - name: Post changelog as threaded messages
-      if: ${{ inputs.changelog_md != '' }}
       shell: bash
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
         THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
       run: |
+        # Check if changelog file exists
+        if [[ ! -f changelog.md ]]; then
+          echo "No changelog.md found, skipping changelog post"
+          exit 0
+        fi
+        
         # Read changelog from file
         changelog_content=$(cat changelog.md)
         
@@ -84,7 +89,15 @@ runs:
               "channel": "'"$SLACK_CHANNEL_ID"'",
               "thread_ts": "'"$THREAD_TS"'",
               "text": '"$chunk_json"',
-              "mrkdwn": true
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": '"$chunk_json"'
+                  }
+                }
+              ]
             }'
           
           sleep 1
@@ -95,31 +108,33 @@ runs:
           # Send as single message
           send_chunk "$changelog_content"
         else
-          # Split into chunks at newlines
-          remaining="$changelog_content"
+          # Split into chunks by complete lines
+          current_chunk=""
           
-          while [[ -n "$remaining" ]]; do
-            # Take up to MAX_LENGTH characters
-            chunk="${remaining:0:$MAX_LENGTH}"
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            # Check if adding this line would exceed the limit
+            test_chunk="${current_chunk}${line}"$'\n'
             
-            # If there's more content, try to break at a newline
-            if [[ ${#remaining} -gt $MAX_LENGTH ]]; then
-              # Find the last newline in the chunk
-              last_newline_pos=$(echo "$chunk" | grep -ob $'\n' | tail -1 | cut -d: -f1)
-              
-              if [[ -n "$last_newline_pos" && "$last_newline_pos" -gt 0 ]]; then
-                # Break at the last newline
-                chunk="${remaining:0:$last_newline_pos}"
+            if [[ ${#test_chunk} -gt $MAX_LENGTH ]]; then
+              # Send current chunk if it's not empty
+              if [[ -n "$current_chunk" ]]; then
+                send_chunk "$current_chunk"
+                current_chunk=""
               fi
+              
+              # If a single line is longer than MAX_LENGTH, send it anyway
+              if [[ ${#line} -gt $MAX_LENGTH ]]; then
+                send_chunk "$line"
+              else
+                current_chunk="${line}"$'\n'
+              fi
+            else
+              current_chunk="$test_chunk"
             fi
-            
-            send_chunk "$chunk"
-            
-            # Remove sent chunk from remaining
-            chunk_length=${#chunk}
-            remaining="${remaining:$chunk_length}"
-            
-            # Skip leading newline if present
-            remaining="${remaining#$'\n'}"
-          done
+          done <<< "$changelog_content"
+          
+          # Send remaining chunk
+          if [[ -n "$current_chunk" ]]; then
+            send_chunk "$current_chunk"
+          fi
         fi
