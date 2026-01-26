@@ -1,17 +1,19 @@
 
 on:
   workflow_dispatch:
+    inputs:
+      testing: 
+        type: boolean
 
 jobs:
   collect-changelog:
+    if: ${{ github.event.inputs.testing == true }}
     name: Collect changelog
     runs-on: ubuntu-latest
     outputs:
       changelog_md: ${{ steps.generate.outputs.markdown }}
     steps:
       - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - name: Generate changelog
         id: generate
@@ -23,9 +25,6 @@ jobs:
             --jira-url "https://hansefit.atlassian.net" \
             --jira-project "MAPP" \
             --output changelog.md
-          echo "markdown<<EOF" >> "$GITHUB_OUTPUT"
-          cat changelog.md >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Upload changelog artifact
         uses: actions/upload-artifact@v4
@@ -44,4 +43,3 @@ jobs:
         with:
           slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ secrets.SLACK_BUILDS_CHANNEL_ID }}
-          changelog_md: ${{ needs.collect-changelog.outputs.changelog_md }}

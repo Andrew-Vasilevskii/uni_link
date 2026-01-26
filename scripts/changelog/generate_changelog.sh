@@ -3,14 +3,37 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: generate_changelog.sh --flavor <DEV|BETA|PROD> --version <x.y.z> --build <number> [--output <path>] [--jira-url <url>] [--jira-project <key>]
+Usage: generate_changelog.sh --flavor <FLAVOR> --version <VERSION> --build <NUMBER> [OPTIONS]
 
-Generates a Markdown changelog for the pending release by diffing the last
-successful flavor tag against the current HEAD.
+Generates a Markdown changelog by comparing the two most recent flavor tags.
 
-Options:
-  --jira-url       Base Jira URL (e.g., https://yourcompany.atlassian.net)
-  --jira-project   Jira project key (e.g., PROJ)
+Required Arguments:
+  --flavor <FLAVOR>         Build flavor (e.g., dev, beta, prod)
+  --version <VERSION>       Version number (e.g., 1.0.0)
+  --build <NUMBER>          Build number (e.g., 123)
+
+Optional Arguments:
+  --output <PATH>           Output file path (default: changelog.md)
+  --jira-url <URL>          Base Jira URL (e.g., https://company.atlassian.net)
+  --jira-project <KEY>      Jira project key (e.g., PROJ)
+                          When both --jira-url and --jira-project are provided,
+                          ticket references (PROJ-123) will be converted to
+                          standard Markdown links.
+
+  -h, --help               Show this help message
+
+Examples:
+  # Basic usage
+  generate_changelog.sh --flavor beta --version 1.0.0 --build 42
+
+  # With Jira integration
+  generate_changelog.sh --flavor prod --version 2.1.0 --build 100 \
+    --jira-url "https://company.atlassian.net" \
+    --jira-project "MAPP"
+
+  # Custom output file
+  generate_changelog.sh --flavor dev --version 1.0.0 --build 1 \
+    --output CHANGELOG.md
 EOF
 }
 
@@ -65,25 +88,17 @@ if [[ -z "$FLAVOR" || -z "$VERSION" || -z "$BUILD_NUMBER" ]]; then
   exit 1
 fi
 
-if ! command -v git >/dev/null 2>&1; then
-  echo "git command not found" >&2
-  exit 1
-fi
-
-if [[ ! -d .git ]]; then
-  echo "This script must be run from the repository root." >&2
-  exit 1
-fi
-
-# Ensure we have complete history to locate previous tags.
-git fetch --tags --force >/dev/null 2>&1
+# Fetch all tags
+git fetch --tags --force --quiet
 
 FLAVOR_NORMALIZED="${FLAVOR,,}"
 
 current_tag="${FLAVOR_NORMALIZED}-${VERSION}(${BUILD_NUMBER})"
-previous_tag=$(git tag --list "${FLAVOR_NORMALIZED}-*" --sort=-creatordate | grep -v "^${current_tag}$" | head -n 1 || true)
 
-if [[ -z "$previous_tag" ]]; then
+latest_tag=$(git tag -l "${FLAVOR_NORMALIZED}-*" --sort=-v:refname | head -n 1 || true)
+previous_tag=$(git tag -l "${FLAVOR_NORMALIZED}-*" --sort=-v:refname | head -n 2 | tail -n 1 || true)
+
+if [[ -z "$previous_tag" || "$previous_tag" == "$latest_tag" ]]; then
   baseline_commit=$(git rev-list --max-parents=0 HEAD | tail -n 1)
   range="$baseline_commit..HEAD"
   summary_line="Initial release for ${FLAVOR}."
@@ -92,17 +107,15 @@ else
   summary_line="Changes since ${previous_tag}:"
 fi
 
-commit_log=$(git log --no-merges --pretty=format:'- %h %s (%an)' $range || true)
+# %h could be used for abbreviated commit hash if needed
+commit_log=$(git log --no-merges --pretty=format:'- %s (%an)' $range || true)
 if [[ -z "$commit_log" ]]; then
   commit_log="- No code changes since the previous release."
 fi
 
 # Add Jira links if configured
 if [[ -n "$JIRA_URL" && -n "$JIRA_PROJECT" ]]; then
-  # Replace PROJ-123 patterns with standard Markdown links
-  # Supports both uppercase (PROJ-123) and lowercase (proj-123)
-  # Standard Markdown format: [text](url)
-  # Works on both BSD sed (macOS) and GNU sed (Linux)
+
   JIRA_PROJECT_UPPER="${JIRA_PROJECT^^}"
   JIRA_PROJECT_LOWER="${JIRA_PROJECT,,}"
   
