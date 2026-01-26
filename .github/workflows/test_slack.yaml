@@ -7,11 +7,9 @@ on:
 
 jobs:
   collect-changelog:
-    if: ${{ github.event.inputs.testing == true }}
+    if: ${{ github.event.inputs.testing == 'true' }}
     name: Collect changelog
     runs-on: ubuntu-latest
-    outputs:
-      changelog_md: ${{ steps.generate.outputs.markdown }}
     steps:
       - uses: actions/checkout@v5
 
