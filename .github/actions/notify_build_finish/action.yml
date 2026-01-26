@@ -16,6 +16,7 @@ runs:
   using: "composite"
   steps:
     - name: Download changelog artifact
+      id: download_changelog
       uses: actions/download-artifact@v4
       continue-on-error: true
       with:
@@ -39,104 +40,22 @@ runs:
           }
 
     # Upload changelog as file (not rendered as markdown in Slack)
-    # - name: Upload changelog file to Slack
-    #   if: ${{ inputs.changelog_md != '' }}
-    #   uses: slackapi/slack-github-action@v2.1.1
-    #   env:
-    #     SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
-    #     SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
-    #     THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
-    #   with:
-    #     errors: true
-    #     method: files.uploadV2
-    #     token: ${{ env.SLACK_BOT_TOKEN }}
-    #     payload: |
-    #       {
-    #         "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
-    #         "thread_ts": "${{ env.THREAD_TS }}",
-    #         "file": "changelog.md",
-    #         "filename": "changelog.md",
-    #         "title": "Changelog"
-    #       }
-
-    - name: Post changelog as threaded messages
-      shell: bash
+    - name: Upload changelog file to Slack
+      if: steps.download_changelog.outcome == 'success'
+      uses: slackapi/slack-github-action@v2.1.1
       env:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
         THREAD_TS: ${{ fromJson(steps.slack_main.outputs.response).ts }}
-      run: |
-        # Check if changelog file exists
-        if [[ ! -f changelog.md ]]; then
-          echo "No changelog.md found, skipping changelog post"
-          exit 0
-        fi
-        
-        # Read changelog from file
-        changelog_content=$(cat changelog.md)
-        
-        # Convert Markdown headers to Slack format (bold text)
-        # ## Header -> *Header*
-        changelog_content=$(echo "$changelog_content" | sed 's/^## \(.*\)$/*\1*/g')
-        
-        # Convert standard Markdown links to Slack format
-        # [text](url) -> <url|text>
-        changelog_content=$(echo "$changelog_content" | sed -E 's#\[([^]]+)\]\(([^)]+)\)#<\2|\1>#g')
-        
-        MAX_LENGTH=3000
-        
-        # Function to send a message chunk
-        send_chunk() {
-          local chunk="$1"
-          local chunk_json=$(jq -Rs . <<< "$chunk")
-          
-          curl -X POST https://slack.com/api/chat.postMessage \
-            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
-            -H "Content-Type: application/json; charset=utf-8" \
-            -d '{
-              "channel": "'"$SLACK_CHANNEL_ID"'",
-              "thread_ts": "'"$THREAD_TS"'",
-              "text": '"$chunk_json"',
-              "mrkdwn": true,
-              "unfurl_links": false,
-              "unfurl_media": false
-            }'
-          
-          sleep 1
-        }
-        
-        # Split and send changelog
-        if [[ ${#changelog_content} -le $MAX_LENGTH ]]; then
-          # Send as single message
-          send_chunk "$changelog_content"
-        else
-          # Split into chunks by complete lines
-          current_chunk=""
-          
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            # Check if adding this line would exceed the limit
-            test_chunk="${current_chunk}${line}"$'\n'
-            
-            if [[ ${#test_chunk} -gt $MAX_LENGTH ]]; then
-              # Send current chunk if it's not empty
-              if [[ -n "$current_chunk" ]]; then
-                send_chunk "$current_chunk"
-                current_chunk=""
-              fi
-              
-              # If a single line is longer than MAX_LENGTH, send it anyway
-              if [[ ${#line} -gt $MAX_LENGTH ]]; then
-                send_chunk "$line"
-              else
-                current_chunk="${line}"$'\n'
-              fi
-            else
-              current_chunk="$test_chunk"
-            fi
-          done <<< "$changelog_content"
-          
-          # Send remaining chunk
-          if [[ -n "$current_chunk" ]]; then
-            send_chunk "$current_chunk"
-          fi
-        fi
+      with:
+        errors: true
+        method: files.uploadV2
+        token: ${{ env.SLACK_BOT_TOKEN }}
+        payload: |
+          {
+            "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
+            "thread_ts": "${{ env.THREAD_TS }}",
+            "file": "changelog.md",
+            "filename": "changelog.md",
+            "title": "Changelog"
+          }
