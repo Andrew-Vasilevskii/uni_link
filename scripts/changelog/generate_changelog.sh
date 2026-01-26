@@ -99,14 +99,15 @@ fi
 
 # Add Jira links if configured
 if [[ -n "$JIRA_URL" && -n "$JIRA_PROJECT" ]]; then
-  # Replace PROJ-123 patterns with Slack markdown links
+  # Replace PROJ-123 patterns with standard Markdown links
   # Supports both uppercase (PROJ-123) and lowercase (proj-123)
-  # Slack format: <url|text>
-  # \0 preserves the original matched text (with original case) for display
+  # Standard Markdown format: [text](url)
+  # Works on both BSD sed (macOS) and GNU sed (Linux)
   JIRA_PROJECT_UPPER="${JIRA_PROJECT^^}"
   JIRA_PROJECT_LOWER="${JIRA_PROJECT,,}"
   
-  commit_log=$(echo "$commit_log" | sed -E "s#((${JIRA_PROJECT_UPPER}|${JIRA_PROJECT_LOWER})-([0-9]+))#[\1-\2](${JIRA_URL}/browse/${JIRA_PROJECT_UPPER}-\2)#g")
+  # Group 1: project key, Group 2: ticket number
+  commit_log=$(echo "$commit_log" | sed -E "s#(${JIRA_PROJECT_UPPER}|${JIRA_PROJECT_LOWER})-([0-9]+)#[\1-\2](${JIRA_URL}/browse/${JIRA_PROJECT_UPPER}-\2)#g")
 fi
 
 cat <<EOF > "$OUTPUT_FILE"
