@@ -106,8 +106,7 @@ if [[ -n "$JIRA_URL" && -n "$JIRA_PROJECT" ]]; then
   JIRA_PROJECT_UPPER="${JIRA_PROJECT^^}"
   JIRA_PROJECT_LOWER="${JIRA_PROJECT,,}"
   
-  # Match both uppercase and lowercase versions
-  commit_log=$(echo "$commit_log" | sed -E "s#(${JIRA_PROJECT_UPPER}|${JIRA_PROJECT_LOWER})-([0-9]+)#<${JIRA_URL}/browse/${JIRA_PROJECT_UPPER}-\2|\0>#g")
+  commit_log=$(echo "$commit_log" | sed -E "s#((${JIRA_PROJECT_UPPER}|${JIRA_PROJECT_LOWER})-([0-9]+))#[\1-\2](${JIRA_URL}/browse/${JIRA_PROJECT_UPPER}-\2)#g")
 fi
 
 cat <<EOF > "$OUTPUT_FILE"
