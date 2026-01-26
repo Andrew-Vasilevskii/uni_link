@@ -20,6 +20,8 @@ jobs:
             --flavor "BETA" \
             --version "1.0.0" \
             --build "1" \
+            --jira-url "https://hansefit.atlassian.net" \
+            --jira-project "MAPP" \
             --output changelog.md
           echo "markdown<<EOF" >> "$GITHUB_OUTPUT"
           cat changelog.md >> "$GITHUB_OUTPUT"

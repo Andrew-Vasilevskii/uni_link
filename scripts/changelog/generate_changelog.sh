@@ -3,10 +3,14 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-Usage: generate_changelog.sh --flavor <DEV|BETA|PROD> --version <x.y.z> --build <number> [--output <path>]
+Usage: generate_changelog.sh --flavor <DEV|BETA|PROD> --version <x.y.z> --build <number> [--output <path>] [--jira-url <url>] [--jira-project <key>]
 
 Generates a Markdown changelog for the pending release by diffing the last
 successful flavor tag against the current HEAD.
+
+Options:
+  --jira-url       Base Jira URL (e.g., https://yourcompany.atlassian.net)
+  --jira-project   Jira project key (e.g., PROJ)
 EOF
 }
 
@@ -14,6 +18,8 @@ FLAVOR=""
 VERSION=""
 BUILD_NUMBER=""
 OUTPUT_FILE="changelog.md"
+JIRA_URL=""
+JIRA_PROJECT=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -31,6 +37,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --output)
       OUTPUT_FILE="$2"
+      shift 2
+      ;;
+    --jira-url)
+      JIRA_URL="$2"
+      shift 2
+      ;;
+    --jira-project)
+      JIRA_PROJECT="$2"
       shift 2
       ;;
     -h|--help)
@@ -81,6 +95,19 @@ fi
 commit_log=$(git log --no-merges --pretty=format:'- %h %s (%an)' $range || true)
 if [[ -z "$commit_log" ]]; then
   commit_log="- No code changes since the previous release."
+fi
+
+# Add Jira links if configured
+if [[ -n "$JIRA_URL" && -n "$JIRA_PROJECT" ]]; then
+  # Replace PROJ-123 patterns with Slack markdown links
+  # Supports both uppercase (PROJ-123) and lowercase (proj-123)
+  # Slack format: <url|text>
+  # \0 preserves the original matched text (with original case) for display
+  JIRA_PROJECT_UPPER="${JIRA_PROJECT^^}"
+  JIRA_PROJECT_LOWER="${JIRA_PROJECT,,}"
+  
+  # Match both uppercase and lowercase versions
+  commit_log=$(echo "$commit_log" | sed -E "s#(${JIRA_PROJECT_UPPER}|${JIRA_PROJECT_LOWER})-([0-9]+)#<${JIRA_URL}/browse/${JIRA_PROJECT_UPPER}-\2|\0>#g")
 fi
 
 cat <<EOF > "$OUTPUT_FILE"
