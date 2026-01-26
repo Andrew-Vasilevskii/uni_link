@@ -32,10 +32,18 @@ jobs:
           name: changelog
           path: changelog.md
   
+  some-other-job:
+    name: Some Other Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy Step
+        run: echo "Doing some other work..."
+
   notify-build-finish:
+    if: always() && needs.some-other-job.result == 'success'
     name: Send Final Ping
     runs-on: ubuntu-latest
-    needs: [ collect-changelog ]
+    needs: [ collect-changelog, some-other-job]
     steps:
       - uses: actions/checkout@v5
 
