@@ -55,6 +55,7 @@ runs:
           {
             "channel_id": "${{ env.SLACK_CHANNEL_ID }}",
             "thread_ts": "${{ env.THREAD_TS }}",
+            "initial_comment": "the results are in!"
             "file": "changelog.md",
             "filename": "changelog.md",
             "title": "Changelog"
